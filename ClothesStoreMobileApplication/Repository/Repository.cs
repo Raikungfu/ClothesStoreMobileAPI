@@ -1,7 +1,7 @@
 ﻿namespace ClothesStoreMobileApplication.Repository
 {
+    using ClothesStoreMobileApplication.Models;
     using ClothesStoreMobileApplication.Repository.IRepository;
-    using DataAccess.Repository.IRepository;
     using Microsoft.EntityFrameworkCore;
     using System;
     using System.Collections.Generic;
@@ -14,9 +14,9 @@
     {
         public class Repository<T> : IRepository<T> where T : class
         {
-            private readonly AppDbContext _db;
+            private readonly ClothesStoreContext _db;
             internal DbSet<T> dbSet;
-            public Repository(AppDbContext db)
+            public Repository(ClothesStoreContext db)
             {
                 _db = db;
                 this.dbSet = _db.Set<T>();

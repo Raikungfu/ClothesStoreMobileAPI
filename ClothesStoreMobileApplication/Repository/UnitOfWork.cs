@@ -10,7 +10,11 @@ namespace ClothesStoreMobileApplication.Repository
         public UnitOfWork(ClothesStoreContext db)
         {
             _db = db;
+            Product = new ProductRepository(_db);
+
         }
+
+        public IProductRepository Product { get; private set; }
 
         public void Dispose()
         {

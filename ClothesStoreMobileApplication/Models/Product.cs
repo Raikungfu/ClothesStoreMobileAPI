@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace ClothesStoreMobileApplication.Models
 {
@@ -33,8 +34,11 @@ namespace ClothesStoreMobileApplication.Models
         [ForeignKey("Seller")]
         public int? SellerId { get; set; }
 
+        [JsonIgnore]
         public virtual Category Category { get; set; }
+        [JsonIgnore]
         public virtual Seller Seller { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Option> Options { get; set; }
     }
 }

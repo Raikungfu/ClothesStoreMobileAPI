@@ -79,6 +79,13 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.AddSignalR();
 
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(500);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 var app = builder.Build();
 
 app.UseCors("AllowSpecificOrigin");
@@ -96,5 +103,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseSession();
 
 app.Run();

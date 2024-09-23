@@ -12,6 +12,8 @@ namespace ClothesStoreMobileApplication.Models
         public int CustomerId { get; set;  }
 
         [ForeignKey("CustomerId")]
+        public int CustomerId { get; set; }
+
         public Customer Customer { get; set; }
 
         public ICollection<Product> Products { get; set; }

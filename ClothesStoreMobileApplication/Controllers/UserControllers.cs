@@ -49,7 +49,7 @@ namespace ClothesStoreMobileApplication.Controllers
 
         // Login
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginModels model)
+        public async Task<IActionResult> Login([FromBody]LoginModels model)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == model.Username);
             //  if (user == null || !PasswordHelper.VerifyPassword(model.Password, user.Password)) 

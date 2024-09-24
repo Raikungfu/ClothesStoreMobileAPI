@@ -9,8 +9,6 @@ namespace ClothesStoreMobileApplication.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int CartId { get; set; }
 
-        public int CustomerId { get; set;  }
-
         [ForeignKey("CustomerId")]
         public int CustomerId { get; set; }
 

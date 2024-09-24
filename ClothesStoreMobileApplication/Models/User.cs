@@ -31,5 +31,4 @@ namespace ClothesStoreMobileApplication.Models
         [Required]
         public UserType UserType { get; set; }
     }
-
 }

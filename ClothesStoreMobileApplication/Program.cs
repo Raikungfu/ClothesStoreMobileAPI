@@ -9,8 +9,6 @@ using ClothesStoreMobileApplication.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
 
 builder.Services.AddDbContext<ClothesStoreContext>(options =>
@@ -39,10 +37,11 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin", policy =>
     {
-        policy.WithOrigins(allowedOrigins)
+        // policy.WithOrigins(allowedOrigins)
+        policy.AllowAnyOrigin()
               .AllowAnyMethod()
               .AllowAnyHeader()
-              .AllowCredentials()
+              // .AllowCredentials()
               .SetIsOriginAllowed(_ => true)
               .WithExposedHeaders("Authorization");
     });
@@ -96,7 +95,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseAuthentication();
 

@@ -29,6 +29,6 @@ namespace ClothesStoreMobileApplication.Models
         public bool Status { get; set; } = true;
 
         [Required]
-        public UserType UserType { get; set; }
+        public UserType UserType { get; set; } = UserType.Customer;
     }
 }

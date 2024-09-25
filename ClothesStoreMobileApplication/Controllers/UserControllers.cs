@@ -27,7 +27,7 @@ namespace ClothesStoreMobileApplication.Controllers
         public async Task<IActionResult> Register(RegisterModels model)
         {
             if (await _context.Users.AnyAsync(u => u.Username == model.Username))
-                return BadRequest("Username is already taken.");
+                return BadRequest(new { Message = "Username is already taken." });
 
    //         var hashedPassword = PasswordHelper.HashPassword(model.Password);
 
@@ -41,10 +41,37 @@ namespace ClothesStoreMobileApplication.Controllers
                 UserType = model.UserType
             };
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            switch (user.UserType)
+            {
+                case UserType.Admin:
+                    var admin = new Admin
+                    {
+                        UserId = user.UserId
+                    };
+                    _context.Admins.Add(admin);
+                    break;
+                case UserType.Seller:
+                    var seller = new Seller
+                    {
+                        UserId = user.UserId
+                    };
+                    _context.Sellers.Add(seller);
+                    break;
+                case UserType.Customer:
+                    var customer = new Customer
+                    {
+                        UserId = user.UserId
+                    };
+                    _context.Customers.Add(customer);
+                    break;
+                default:
+                    return BadRequest(new { Message = "Role of user not correct!" });
+            }
 
-            return Ok("Registration successful.");
+            _context.Users.Add(user);
+            _context.SaveChangesAsync();
+
+            return Ok(new { Message = "Registration successful." });
         }
 
         // Login
@@ -54,11 +81,11 @@ namespace ClothesStoreMobileApplication.Controllers
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == model.Username);
             //  if (user == null || !PasswordHelper.VerifyPassword(model.Password, user.Password)) 
             if (user == null || user.Password != model.Password)
-                return Unauthorized("Invalid credentials.");
+                return Unauthorized(new { Message = "Invalid credentials." });
 
             var token = GenerateJwtToken(user);
 
-            return Ok(new { Token = token });
+            return Ok(new { Token = token, Message = "Login successful!" });
         }
 
         private string GenerateJwtToken(User user)

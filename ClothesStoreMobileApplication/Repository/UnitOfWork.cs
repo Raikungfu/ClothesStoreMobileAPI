@@ -21,6 +21,7 @@ namespace ClothesStoreMobileApplication.Repository
             Seller = new SellerRepository(_db);
             Customer = new CustomerRepository(_db);
             Cart = new CartRepository(_db);
+            CartItem = new CartItemRepository(_db);
         }
 
         public IProductRepository Product { get; private set; }
@@ -34,6 +35,7 @@ namespace ClothesStoreMobileApplication.Repository
         public ISellerRepository Seller { get; private set; }
         public ICustomerRepository Customer { get; private set; }
         public ICartRepository Cart { get; private set; }
+        public ICartItemRepository CartItem { get; private set; }
 
         public void Dispose()
         {

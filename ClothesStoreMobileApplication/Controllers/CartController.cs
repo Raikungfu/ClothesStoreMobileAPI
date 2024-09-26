@@ -46,17 +46,24 @@ namespace ClothesStoreMobileApplication.Controllers
         [HttpPost]
         public IActionResult Post(int customerId)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                var objToCreate = new Cart
+                {
+                    CustomerId = customerId
+                };
+                _unitOfWork.Cart.Add(objToCreate);
+                _unitOfWork.Save();
+                return Ok(objToCreate);
             }
-            var objToCreate = new Cart
+            catch (Exception ex)
             {
-                CustomerId = customerId
-            };
-            _unitOfWork.Cart.Add(objToCreate);
-            _unitOfWork.Save();
-            return Ok(objToCreate);
+                return StatusCode(500, "Internal Server Error");
+            }
         }
     }
 }

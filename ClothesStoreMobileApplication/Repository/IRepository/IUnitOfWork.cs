@@ -13,6 +13,7 @@
         ISellerRepository Seller { get; }
         ICustomerRepository Customer { get; }
         ICartRepository Cart { get; }
+        ICartItemRepository CartItem { get; }
         void Save();
     }
 }

@@ -41,6 +41,8 @@ namespace ClothesStoreMobileApplication.Controllers
                 UserType = model.UserType
             };
 
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
             switch (user.UserType)
             {
                 case UserType.Admin:
@@ -49,6 +51,8 @@ namespace ClothesStoreMobileApplication.Controllers
                         UserId = user.UserId
                     };
                     _context.Admins.Add(admin);
+                    await _context.SaveChangesAsync();
+
                     break;
                 case UserType.Seller:
                     var seller = new Seller
@@ -56,6 +60,8 @@ namespace ClothesStoreMobileApplication.Controllers
                         UserId = user.UserId
                     };
                     _context.Sellers.Add(seller);
+                    await _context.SaveChangesAsync();
+
                     break;
                 case UserType.Customer:
                     var customer = new Customer
@@ -63,13 +69,13 @@ namespace ClothesStoreMobileApplication.Controllers
                         UserId = user.UserId
                     };
                     _context.Customers.Add(customer);
+                    await _context.SaveChangesAsync();
+
                     break;
                 default:
                     return BadRequest(new { Message = "Role of user not correct!" });
             }
 
-            _context.Users.Add(user);
-            _context.SaveChangesAsync();
 
             return Ok(new { Message = "Registration successful." });
         }

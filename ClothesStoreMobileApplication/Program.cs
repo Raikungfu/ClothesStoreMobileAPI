@@ -8,6 +8,7 @@ using System;
 using ClothesStoreMobileApplication.Service;
 using ClothesStoreMobileApplication.Repository.IRepository;
 using ClothesStoreMobileApplication.Repository;
+using ClothesStoreMobileApplication.AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,6 +58,8 @@ builder.Services.AddCors(options =>
               .WithExposedHeaders("Authorization");
     });
 });
+
+builder.Services.AddAutoMapper(typeof(ClothesStoreMapper));
 
 builder.Services.AddAuthentication(options =>
 {

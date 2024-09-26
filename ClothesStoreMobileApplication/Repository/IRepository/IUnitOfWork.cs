@@ -9,6 +9,9 @@
         IProductOptionRepository ProductOption { get; }
         IDiscountRepository Discount { get; }
         IChatRepository Chat { get; }
+        IChatMessageRepository ChatMessage { get; }
+        ISellerRepository Seller { get; }
+        ICustomerRepository Customer { get; }
         void Save();
     }
 }

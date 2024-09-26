@@ -20,6 +20,7 @@ namespace ClothesStoreMobileApplication.Repository
             ChatMessage = new ChatMessageRepository(_db);
             Seller = new SellerRepository(_db);
             Customer = new CustomerRepository(_db);
+            Cart = new CartRepository(_db);
         }
 
         public IProductRepository Product { get; private set; }
@@ -32,6 +33,7 @@ namespace ClothesStoreMobileApplication.Repository
         public IChatMessageRepository ChatMessage { get; private set; }
         public ISellerRepository Seller { get; private set; }
         public ICustomerRepository Customer { get; private set; }
+        public ICartRepository Cart { get; private set; }
 
         public void Dispose()
         {

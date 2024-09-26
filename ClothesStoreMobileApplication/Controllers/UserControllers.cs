@@ -116,5 +116,12 @@ namespace ClothesStoreMobileApplication.Controllers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+        [HttpGet("user/{type}")]
+        public async Task<IActionResult> GetUserByType(UserType type)
+        {
+            var users = await _context.Users.Where(u => u.UserType == type).ToListAsync();
+            return Ok(users);
+        }
     }
 }

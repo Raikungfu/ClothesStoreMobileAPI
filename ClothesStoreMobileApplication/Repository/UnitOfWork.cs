@@ -15,6 +15,8 @@ namespace ClothesStoreMobileApplication.Repository
             Option = new OptionRepository(_db);
             ProductOption = new ProductOptionRepository(_db);
             Discount = new DiscountRepository(_db);
+            Chat = new ChatRepository(_db);
+            User = new UserRepository(_db);
         }
 
         public IProductRepository Product { get; private set; }
@@ -22,6 +24,8 @@ namespace ClothesStoreMobileApplication.Repository
         public IOptionRepository Option { get; private set; }
         public IProductOptionRepository ProductOption { get; private set; }
         public IDiscountRepository Discount { get; private set; }
+        public IChatRepository Chat { get; private set; }
+        public IUserRepository User { get; private set; }
 
         public void Dispose()
         {

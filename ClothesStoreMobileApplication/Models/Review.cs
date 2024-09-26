@@ -20,7 +20,7 @@ namespace ClothesStoreMobileApplication.Models
         public int? CustomerId { get; set; }
 
         [Required]
-        public int Rating { get; set; }
+        public int Rating { get; set; } 
 
         public string? Comment { get; set; }
 

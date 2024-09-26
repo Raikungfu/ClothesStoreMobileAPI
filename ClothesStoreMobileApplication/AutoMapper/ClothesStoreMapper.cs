@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ClothesStoreMobileApplication.Models;
 using ClothesStoreMobileApplication.ViewModels.Category;
+using ClothesStoreMobileApplication.ViewModels.ChatMessage;
 using ClothesStoreMobileApplication.ViewModels.Option;
 using ClothesStoreMobileApplication.ViewModels.Product;
 
@@ -16,6 +17,8 @@ namespace ClothesStoreMobileApplication.AutoMapper
             CreateMap<Category, CategoryViewModel>().ReverseMap();
 
             CreateMap<Option, OptionViewModel>().ReverseMap();
+
+            CreateMap<ChatMessage,ChatMessageViewModel>().ReverseMap();
         }
     }
 }

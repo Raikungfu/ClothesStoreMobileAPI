@@ -6,6 +6,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System;
 using ClothesStoreMobileApplication.Service;
+using ClothesStoreMobileApplication.Repository.IRepository;
+using ClothesStoreMobileApplication.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,8 @@ builder.Services.AddSwaggerGen();
 
 
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
 
 var environment = builder.Environment.EnvironmentName;
 

@@ -12,6 +12,7 @@
         IChatMessageRepository ChatMessage { get; }
         ISellerRepository Seller { get; }
         ICustomerRepository Customer { get; }
+        ICartRepository Cart { get; }
         void Save();
     }
 }

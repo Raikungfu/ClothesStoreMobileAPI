@@ -40,5 +40,6 @@ namespace ClothesStoreMobileApplication.Models
         public virtual Seller Seller { get; set; }
         [JsonIgnore]
         public virtual ICollection<Option> Options { get; set; }
+
     }
 }

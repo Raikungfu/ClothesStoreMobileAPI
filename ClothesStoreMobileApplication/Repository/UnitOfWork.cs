@@ -11,10 +11,12 @@ namespace ClothesStoreMobileApplication.Repository
         {
             _db = db;
             Product = new ProductRepository(_db);
+            Category = new CategoryRepository(_db);
 
         }
 
         public IProductRepository Product { get; private set; }
+        public ICategoryRepository Category { get; private set; }
 
         public void Dispose()
         {

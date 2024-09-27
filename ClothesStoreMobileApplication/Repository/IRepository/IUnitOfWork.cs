@@ -14,6 +14,7 @@
         ICustomerRepository Customer { get; }
         ICartRepository Cart { get; }
         ICartItemRepository CartItem { get; }
+        IReviewRepository Review { get; }
         void Save();
     }
 }

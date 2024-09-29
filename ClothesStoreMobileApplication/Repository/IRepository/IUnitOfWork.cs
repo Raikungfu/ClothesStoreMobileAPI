@@ -9,6 +9,13 @@
         IProductOptionRepository ProductOption { get; }
         IDiscountRepository Discount { get; }
         IChatRepository Chat { get; }
+        IChatMessageRepository ChatMessage { get; }
+        ISellerRepository Seller { get; }
+        ICustomerRepository Customer { get; }
+        ICartRepository Cart { get; }
+        ICartItemRepository CartItem { get; }
+        IReviewRepository Review { get; }
+        IReplyReviewRepository ReplyReview { get; }
         void Save();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace ClothesStoreMobileApplication.Models
 {
@@ -24,7 +25,9 @@ namespace ClothesStoreMobileApplication.Models
 
         public DateTime Timestamp { get; set; } = DateTime.Now;
 
+        [JsonIgnore]
         public virtual Chat Chat { get; set; }
+        [JsonIgnore]
         public virtual User User { get; set; }
     }
 }

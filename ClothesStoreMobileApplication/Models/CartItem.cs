@@ -1,6 +1,7 @@
 ﻿using ClothesStoreMobileApplication.Models;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace ClothesStoreMobileApplication.Models
 {
@@ -19,9 +20,11 @@ namespace ClothesStoreMobileApplication.Models
         [Required]
         public int ProductId { get; set; }
 
+        [JsonIgnore]
         [ForeignKey("CartId")]
         public virtual Cart Cart { get; set; }
 
+        [JsonIgnore]
         [ForeignKey("ProductId")]
         public virtual Product Product { get; set; }
     }

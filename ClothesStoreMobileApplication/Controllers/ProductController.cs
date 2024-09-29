@@ -21,16 +21,25 @@ namespace ClothesStoreMobileApplication.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Get(string orderBy = "Default", int pageNumber = 1, int pageSize = 10)
         {
-            var objList = _unitOfWork.Product.GetAll(null, null, "Category");
-            return Ok(objList);
+            switch(orderBy)
+            {
+                case "SaleOff":
+                    return Ok(_unitOfWork.Product.GetProducts(orderByMostDiscount: true, includeProperties: "Category").Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList());
+                case "Newest":
+                    return Ok(_unitOfWork.Product.GetProducts(orderByLatest: true, includeProperties: "Category").Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList());
+                case "BestSeller":
+                    return Ok(_unitOfWork.Product.GetProducts(orderByMostSales: true, includeProperties: "Category").Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList());
+                default:
+                    return Ok(_unitOfWork.Product.GetAll(null, null, "Category").Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList());
+            }
         }
 
         [HttpGet("{id:int}")]
         public IActionResult Get(int id)
         {
-            var obj = _unitOfWork.Product.GetFirstOrDefault(u =>    u.ProductId == id, "Category");
+            var obj = _unitOfWork.Product.GetFirstOrDefault(u => u.ProductId == id, "Category");
             if (obj == null)
             {
                 return NotFound();

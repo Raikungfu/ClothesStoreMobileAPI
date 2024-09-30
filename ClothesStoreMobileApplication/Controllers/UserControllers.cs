@@ -80,7 +80,7 @@ namespace ClothesStoreMobileApplication.Controllers
             return Ok(new { Message = "Registration successful." });
         }
 
-        //// Login
+        // Login
         //[HttpPost("login")]
         //public async Task<IActionResult> Login([FromBody]LoginModels model)
         //{

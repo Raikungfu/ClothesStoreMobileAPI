@@ -36,10 +36,15 @@ namespace ClothesStoreMobileApplication.Models
 
         [JsonIgnore]
         public virtual Category Category { get; set; }
+
         [JsonIgnore]
         public virtual Seller Seller { get; set; }
+
         [JsonIgnore]
         public virtual ICollection<Option> Options { get; set; }
+
+        [JsonIgnore]
+        public virtual ICollection<Review> Reviews { get; set; }
 
     }
 }

@@ -4,6 +4,8 @@ using ClothesStoreMobileApplication.Repository.IRepository;
 using ClothesStoreMobileApplication.ViewModels.Product;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace ClothesStoreMobileApplication.Controllers
 {
@@ -21,20 +23,58 @@ namespace ClothesStoreMobileApplication.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get(string orderBy = "Default", int pageNumber = 1, int pageSize = 10)
+        public IActionResult Get(string orderBy = "Default", int pageNumber = 1, int pageSize = 10, int? categoryId = null, int? sellerId = null)
         {
-            switch(orderBy)
+            IEnumerable<Product> products;
+
+            products = _unitOfWork.Product.GetAll(null, null, "Reviews");
+
+            if (categoryId.HasValue)
+            {
+                products = products.Where(p => p.CategoryId == categoryId.Value);
+            }
+
+            if (sellerId.HasValue)
+            {
+                products = products.Where(p => p.SellerId == sellerId.Value);
+            }
+
+            switch (orderBy)
             {
                 case "SaleOff":
-                    return Ok(_unitOfWork.Product.GetProducts(orderByMostDiscount: true, includeProperties: "Category").Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList());
+                    products = products.OrderByDescending(p => p.NewPrice < p.OldPrice ? (p.OldPrice - p.NewPrice) : 0);
+                    break;
                 case "Newest":
-                    return Ok(_unitOfWork.Product.GetProducts(orderByLatest: true, includeProperties: "Category").Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList());
+                    products = products.OrderByDescending(p => p.ProductId);
+                    break;
                 case "BestSeller":
-                    return Ok(_unitOfWork.Product.GetProducts(orderByMostSales: true, includeProperties: "Category").Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList());
+                    products = products.OrderByDescending(p => p.QuantitySold);
+                    break;
                 default:
-                    return Ok(_unitOfWork.Product.GetAll(null, null, "Category").Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList());
+                    products = products.OrderBy(p => p.ProductId);
+                    break;
             }
+
+            var result = products.Skip((pageNumber - 1) * pageSize).Take(pageSize).Select(x => new
+            {
+                ProductId = x.ProductId,
+                Name = x.Name,
+                Img = x.Img,
+                Quantity = x.Quantity,
+                Description = x.Description,
+                NewPrice = x.NewPrice,
+                OldPrice = x.OldPrice,
+                QuantitySold = x.QuantitySold,
+                CategoryId = x.CategoryId,
+                SellerId = x.SellerId,
+                RatingPoint = x.Reviews != null && x.Reviews.Any() ? x.Reviews.Select(r => r.Rating).Average() : 0,
+                RatingCount = x.Reviews != null ? x.Reviews.Count : 0
+            }).ToList();
+
+            return Ok(result);
         }
+
+
 
         [HttpGet("{id:int}")]
         public IActionResult Get(int id)

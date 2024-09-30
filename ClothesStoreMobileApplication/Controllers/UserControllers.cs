@@ -80,19 +80,19 @@ namespace ClothesStoreMobileApplication.Controllers
             return Ok(new { Message = "Registration successful." });
         }
 
-        // Login
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody]LoginModels model)
-        {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == model.Username);
-            //  if (user == null || !PasswordHelper.VerifyPassword(model.Password, user.Password)) 
-            if (user == null || user.Password != model.Password)
-                return Unauthorized(new { Message = "Invalid credentials." });
+        //// Login
+        //[HttpPost("login")]
+        //public async Task<IActionResult> Login([FromBody]LoginModels model)
+        //{
+        //    var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == model.Username);
+        //    //  if (user == null || !PasswordHelper.VerifyPassword(model.Password, user.Password)) 
+        //    if (user == null || user.Password != model.Password)
+        //        return Unauthorized(new { Message = "Invalid credentials." });
 
-            var token = GenerateJwtToken(user);
+        //    var token = GenerateJwtToken(user);
 
-            return Ok(new { Token = token, Message = "Login successful!" });
-        }
+        //    return Ok(new { Token = token, Message = "Login successful!" });
+        //}
 
         private string GenerateJwtToken(User user)
         {

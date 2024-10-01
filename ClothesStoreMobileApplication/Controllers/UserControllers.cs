@@ -99,6 +99,7 @@ namespace ClothesStoreMobileApplication.Controllers
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Username),
+                new Claim("Id", user.UserId.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.Role, user.UserType.ToString())
             };
@@ -107,8 +108,8 @@ namespace ClothesStoreMobileApplication.Controllers
             var creds = new SigningCredentials(key, SecurityAlgorithms.RsaSha256);
 
             var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
+                issuer: "RaiYugi",
+                audience: "Saint",
                 claims: claims,
                 expires: DateTime.Now.AddHours(3),
                 signingCredentials: creds

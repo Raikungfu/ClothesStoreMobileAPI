@@ -170,17 +170,17 @@ namespace ClothesStoreMobileApplication.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoomId"));
 
-                    b.Property<int>("CustomerId")
+                    b.Property<int>("UserId1")
                         .HasColumnType("int");
 
-                    b.Property<int>("SellerId")
+                    b.Property<int>("UserId2")
                         .HasColumnType("int");
 
                     b.HasKey("RoomId");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("UserId1");
 
-                    b.HasIndex("SellerId");
+                    b.HasIndex("UserId2");
 
                     b.ToTable("Chats");
 
@@ -188,8 +188,8 @@ namespace ClothesStoreMobileApplication.Migrations
                         new
                         {
                             RoomId = 1,
-                            CustomerId = 1,
-                            SellerId = 1
+                            UserId1 = 3,
+                            UserId2 = 2
                         });
                 });
 
@@ -233,8 +233,8 @@ namespace ClothesStoreMobileApplication.Migrations
                             MessageId = 1,
                             Content = "Hello, I have a question about my order.",
                             RoomId = 1,
-                            SenderId = 1,
-                            Timestamp = new DateTime(2024, 9, 21, 21, 6, 35, 513, DateTimeKind.Local).AddTicks(1497)
+                            SenderId = 3,
+                            Timestamp = new DateTime(2024, 10, 1, 14, 40, 56, 982, DateTimeKind.Local).AddTicks(2456)
                         },
                         new
                         {
@@ -242,7 +242,7 @@ namespace ClothesStoreMobileApplication.Migrations
                             Content = "Sure, how can I assist you?",
                             RoomId = 1,
                             SenderId = 2,
-                            Timestamp = new DateTime(2024, 9, 21, 21, 6, 35, 513, DateTimeKind.Local).AddTicks(1499)
+                            Timestamp = new DateTime(2024, 10, 1, 14, 40, 56, 982, DateTimeKind.Local).AddTicks(2458)
                         },
                         new
                         {
@@ -250,7 +250,7 @@ namespace ClothesStoreMobileApplication.Migrations
                             Content = "Is there anything specific you need help with?",
                             RoomId = 1,
                             SenderId = 2,
-                            Timestamp = new DateTime(2024, 9, 21, 21, 6, 35, 513, DateTimeKind.Local).AddTicks(1501)
+                            Timestamp = new DateTime(2024, 10, 1, 14, 40, 56, 982, DateTimeKind.Local).AddTicks(2459)
                         });
                 });
 
@@ -477,7 +477,7 @@ namespace ClothesStoreMobileApplication.Migrations
                             OrderId = 1,
                             CustomerId = 1,
                             DiscountCode = "SUMMER20",
-                            OrderDate = new DateTime(2024, 9, 21, 21, 6, 35, 513, DateTimeKind.Local).AddTicks(1356),
+                            OrderDate = new DateTime(2024, 10, 1, 14, 40, 56, 982, DateTimeKind.Local).AddTicks(2320),
                             PaymentMethod = "credit_card",
                             ShipAddress = "123 Main St, Cityville",
                             ShipFee = 5,
@@ -491,7 +491,7 @@ namespace ClothesStoreMobileApplication.Migrations
                         {
                             OrderId = 2,
                             CustomerId = 1,
-                            OrderDate = new DateTime(2024, 9, 21, 21, 6, 35, 513, DateTimeKind.Local).AddTicks(1360),
+                            OrderDate = new DateTime(2024, 10, 1, 14, 40, 56, 982, DateTimeKind.Local).AddTicks(2324),
                             PaymentMethod = "paypal",
                             ShipAddress = "456 Elm St, Townsville",
                             ShipFee = 0,
@@ -1064,7 +1064,7 @@ namespace ClothesStoreMobileApplication.Migrations
                         {
                             ReplyId = 1,
                             Content = "Thank you for your feedback!",
-                            ReplyDate = new DateTime(2024, 9, 21, 21, 6, 35, 513, DateTimeKind.Local).AddTicks(1445),
+                            ReplyDate = new DateTime(2024, 10, 1, 14, 40, 56, 982, DateTimeKind.Local).AddTicks(2409),
                             ReviewId = 1,
                             UserId = 1
                         },
@@ -1072,7 +1072,7 @@ namespace ClothesStoreMobileApplication.Migrations
                         {
                             ReplyId = 2,
                             Content = "We appreciate your input!",
-                            ReplyDate = new DateTime(2024, 9, 21, 21, 6, 35, 513, DateTimeKind.Local).AddTicks(1447),
+                            ReplyDate = new DateTime(2024, 10, 1, 14, 40, 56, 982, DateTimeKind.Local).AddTicks(2411),
                             ReviewId = 2,
                             UserId = 2
                         });
@@ -1309,21 +1309,21 @@ namespace ClothesStoreMobileApplication.Migrations
 
             modelBuilder.Entity("ClothesStoreMobileApplication.Models.Chat", b =>
                 {
-                    b.HasOne("ClothesStoreMobileApplication.Models.Customer", "Customer")
+                    b.HasOne("ClothesStoreMobileApplication.Models.User", "User1")
                         .WithMany()
-                        .HasForeignKey("CustomerId")
+                        .HasForeignKey("UserId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ClothesStoreMobileApplication.Models.Seller", "Seller")
+                    b.HasOne("ClothesStoreMobileApplication.Models.User", "User2")
                         .WithMany()
-                        .HasForeignKey("SellerId")
+                        .HasForeignKey("UserId2")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Customer");
+                    b.Navigation("User1");
 
-                    b.Navigation("Seller");
+                    b.Navigation("User2");
                 });
 
             modelBuilder.Entity("ClothesStoreMobileApplication.Models.ChatMessage", b =>
@@ -1452,7 +1452,7 @@ namespace ClothesStoreMobileApplication.Migrations
                         .HasForeignKey("OrderId");
 
                     b.HasOne("ClothesStoreMobileApplication.Models.Product", "Product")
-                        .WithMany()
+                        .WithMany("Reviews")
                         .HasForeignKey("ProductId");
 
                     b.Navigation("Customer");
@@ -1498,6 +1498,8 @@ namespace ClothesStoreMobileApplication.Migrations
             modelBuilder.Entity("ClothesStoreMobileApplication.Models.Product", b =>
                 {
                     b.Navigation("Options");
+
+                    b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("ClothesStoreMobileApplication.Models.ProductOption", b =>

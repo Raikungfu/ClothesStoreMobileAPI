@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ClothesStoreMobileApplication.Models;
 using ClothesStoreMobileApplication.Repository.IRepository;
+using ClothesStoreMobileApplication.Service;
 using ClothesStoreMobileApplication.ViewModels.Chat;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -28,14 +29,32 @@ namespace ClothesStoreMobileApplication.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public IActionResult Get(int id)
+        public IActionResult Get(int id, [FromQuery] string token)
         {
-            var obj = _unitOfWork.Chat.GetFirstOrDefault(u => u.RoomId == id);
-            if (obj == null)
+            var principal = KeyHelper.ValidateJwtToken(token);
+
+            if (principal == null)
             {
-                return NotFound();
+                return BadRequest("Invalid token");
             }
-            return Ok(obj);
+
+            var userIdClaim = principal.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return BadRequest("User ID not found in token.");
+            }
+
+            var userId = int.Parse(userIdClaim.Value);
+
+            var chatRooms = _unitOfWork.Chat.GetAll(u => u.UserId1 == userId || u.UserId2 == userId).ToList();
+
+            if (chatRooms == null || !chatRooms.Any())
+            {
+                return NotFound("No chat rooms found for this user.");
+            }
+
+            return Ok(chatRooms);
         }
 
         [HttpPost]
@@ -43,13 +62,13 @@ namespace ClothesStoreMobileApplication.Controllers
         {
             try
             {
-                var obj = _unitOfWork.Chat.GetFirstOrDefault(u => u.CustomerId == chatvm.CustomerId && u.SellerId == chatvm.SellerId);
+                var obj = _unitOfWork.Chat.GetFirstOrDefault(u => u.UserId1 == chatvm.UserId1 && u.UserId2 == chatvm.UserId2);
                 if (obj == null)
                 {
                     var chat = new Chat
                     {
-                        CustomerId = chatvm.CustomerId,
-                        SellerId = chatvm.SellerId
+                        UserId1 = chatvm.UserId1,
+                        UserId2 = chatvm.UserId2
                     };
                     _unitOfWork.Chat.Add(chat);
                     _unitOfWork.Save();

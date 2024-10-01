@@ -31,15 +31,15 @@ namespace ClothesStoreMobileApplication.Models
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Chat>()
-                .HasOne(c => c.Customer)
+                .HasOne(c => c.User1)
                 .WithMany()
-                .HasForeignKey(c => c.CustomerId)
+                .HasForeignKey(c => c.UserId1)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Chat>()
-                .HasOne(c => c.Seller)
+                .HasOne(c => c.User2)
                 .WithMany()
-                .HasForeignKey(c => c.SellerId)
+                .HasForeignKey(c => c.UserId2)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ChatMessage>()
@@ -362,8 +362,8 @@ namespace ClothesStoreMobileApplication.Models
                 new Chat
                 {
                     RoomId = 1,
-                    CustomerId = 1, // Ensure the Customer exists
-                    SellerId = 1    // Ensure the Seller exists
+                    UserId1 = 3, // Ensure the Customer exists
+                    UserId2 = 2    // Ensure the Seller exists
                 }
             );
 
@@ -373,7 +373,7 @@ namespace ClothesStoreMobileApplication.Models
                 {
                     MessageId = 1,
                     RoomId = 1,
-                    SenderId = 1, // Assuming the sender is a Customer
+                    SenderId = 3, // Assuming the sender is a Customer
                     Content = "Hello, I have a question about my order.",
                     Timestamp = DateTime.Now
                 },

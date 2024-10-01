@@ -52,7 +52,7 @@ namespace ClothesStoreMobileApplication.Controllers
 
             int otp = new Random().Next(100000, 999999);
 
-            string token = GenerateJwtToken(email.Email, otp);
+            string token = KeyHelper.GenerateJwtToken(email.Email, otp);
 
             SendOtpToEmail(email.Email, otp);
 
@@ -63,7 +63,7 @@ namespace ClothesStoreMobileApplication.Controllers
         [HttpPost("verify-otp")]
         public IActionResult VerifyOtp([FromBody] OtpModel otpModel)
         {
-            var principal = ValidateJwtToken(otpModel.Token);
+            var principal = KeyHelper.ValidateJwtToken(otpModel.Token);
 
             if (principal == null)
             {
@@ -78,7 +78,7 @@ namespace ClothesStoreMobileApplication.Controllers
                 return BadRequest(new { Message = "OTP does not match." });
             }
 
-            string token = GenerateJwtToken(emailClaim, 8020);
+            string token = KeyHelper.GenerateJwtToken(emailClaim, 8020);
 
             return Ok(new { Token = token, Message = "OTP verified." });
         }
@@ -86,7 +86,7 @@ namespace ClothesStoreMobileApplication.Controllers
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordModel model)
         {
-            var principal = ValidateJwtToken(model.Token);
+            var principal = KeyHelper.ValidateJwtToken(model.Token);
 
             if (principal == null)
             {
@@ -140,56 +140,6 @@ namespace ClothesStoreMobileApplication.Controllers
             })
             {
                 smtp.Send(message);
-            }
-        }
-
-        private string GenerateJwtToken(string email, int otp)
-        {
-            var claims = new[]
-            {
-        new Claim("Email", email),
-        new Claim("OTP", otp.ToString()),
-        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-    };
-
-            var rsa = KeyHelper.GetPrivateKey();
-            var creds = new SigningCredentials(new RsaSecurityKey(rsa), SecurityAlgorithms.RsaSha256);
-
-            var token = new JwtSecurityToken(
-                issuer: "RaiYugi",
-                audience: "Saint",
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(1),
-                signingCredentials: creds);
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        private ClaimsPrincipal ValidateJwtToken(string token)
-        {
-            var rsa = KeyHelper.GetPublicKey();
-            var key = new RsaSecurityKey(rsa);
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            try
-            {
-                var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = "RaiYugi",
-                    ValidAudience = "Saint",
-                    IssuerSigningKey = key,
-                    ClockSkew = TimeSpan.Zero
-                }, out SecurityToken validatedToken);
-
-                return principal;
-            }
-            catch
-            {
-                return null;
             }
         }
 

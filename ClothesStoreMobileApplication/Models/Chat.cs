@@ -9,14 +9,14 @@ namespace ClothesStoreMobileApplication.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int RoomId { get; set; }
 
-        [ForeignKey("Customer")]
-        public int CustomerId { get; set; }
+        [ForeignKey("User1")]
+        public int UserId1 { get; set; }
 
-        [ForeignKey("Seller")]
-        public int SellerId { get; set; }
+        [ForeignKey("User2")]
+        public int UserId2 { get; set; }
 
-        public virtual Customer Customer { get; set; }
-        public virtual Seller Seller { get; set; }
+        public virtual User User1 { get; set; }
+        public virtual User User2 { get; set; }
 
         public ICollection<ChatMessage> ChatMessages { get; set; }
     }

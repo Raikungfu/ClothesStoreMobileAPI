@@ -46,23 +46,11 @@ namespace ClothesStoreMobileApplication.Controllers
             {
                 return BadRequest("Room not found");
             }
-            if(chatMessageVM.SenderId != room.CustomerId && chatMessageVM.SenderId != room.SellerId)
+            if(chatMessageVM.SenderId != room.UserId1 && chatMessageVM.SenderId != room.UserId2)
             {
                 return BadRequest("Sender not in the room");
             }
 
-
-            if (chatMessageVM.SenderId == room.CustomerId)
-            {
-                var userCusId = _unitOfWork.Customer.GetFirstOrDefault(x => x.CustomerId == chatMessageVM.SenderId).UserId;
-                chatMessageVM.SenderId = userCusId;
-
-            }
-            else if (chatMessageVM.SenderId == room.SellerId)
-            {
-                var userSelId = _unitOfWork.Seller.GetFirstOrDefault(x => x.SellerId == chatMessageVM.SenderId).UserId;
-                chatMessageVM.SenderId = userSelId;
-            }
             var chatMessage = _mapper.Map<ChatMessage>(chatMessageVM);
             _unitOfWork.ChatMessage.Add(chatMessage);
             _unitOfWork.Save();

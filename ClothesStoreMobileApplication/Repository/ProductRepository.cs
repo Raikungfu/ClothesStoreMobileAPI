@@ -4,6 +4,11 @@ using ClothesStoreMobileApplication.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+using ClothesStoreMobileApplication.ViewModels.Product;
+using AutoMapper;
 
 namespace ClothesStoreMobileApplication.Repository
 {
@@ -34,7 +39,7 @@ namespace ClothesStoreMobileApplication.Repository
                 objFromDb.SellerId = product.SellerId;
             }
         }
-        
+
         public IEnumerable<Product> GetProducts(bool orderByLatest = false, bool orderByMostDiscount = false, bool orderByMostSales = false, string includeProperties = null)
         {
             IQueryable<Product> query = _db.Products;
@@ -45,7 +50,7 @@ namespace ClothesStoreMobileApplication.Repository
             }
             else if (orderByMostDiscount)
             {
-                query = query.OrderByDescending(p => (double) (p.OldPrice - p.NewPrice) / p.OldPrice);
+                query = query.OrderByDescending(p => (double)(p.OldPrice - p.NewPrice) / p.OldPrice);
             }
             else if (orderByMostSales)
             {
@@ -61,6 +66,54 @@ namespace ClothesStoreMobileApplication.Repository
             }
 
             return query.ToList();
+        }
+
+        public ProductDetailViewModel GetProductDetail(int id)
+        {
+            return _db.Products
+            .Where(x => x.ProductId == id)
+        .Select(x => new ProductDetailViewModel
+        {
+            ProductId = x.ProductId,
+            Name = x.Name,
+            Img = x.Img,
+            Quantity = x.Quantity,
+            Description = x.Description,
+            NewPrice = x.NewPrice,
+            OldPrice = x.OldPrice,
+            QuantitySold = x.QuantitySold,
+            CategoryId = x.CategoryId,
+            SellerId = x.SellerId,
+            RatingPoint = x.Reviews.Any() ? x.Reviews.Average(r => r.Rating) : 0,
+            RatingCount = x.Reviews.Count(),
+            Options = x.Options.Select(o => new OptionModel
+            {
+                OptionId = o.OptionId,
+                Name = o.Name,
+                ProductOption = o.ProductOptions.Name,
+                Price = o.Price
+            }).ToList(),
+            Seller = new SellerModel
+            {
+                SellerId = x.Seller.SellerId,
+                CompanyName = x.Seller.CompanyName,
+                Address = x.Seller.Address,
+                Phone = x.Seller.User.Phone,
+                Email = x.Seller.User.Email
+            },
+            Reviews = x.Reviews.Select(r => new ReviewModel
+            {
+                ReviewId = r.ReviewId,
+                Rating = r.Rating,
+                Comment = r.Comment,
+                Customer = new CustomerViewModel
+                {
+                    Name = r.Customer.Name,
+                    Avt = r.Customer.Avt
+                }
+            }).ToList()
+        })
+        .FirstOrDefault();
         }
     }
 }

@@ -74,12 +74,10 @@ namespace ClothesStoreMobileApplication.Controllers
             return Ok(result);
         }
 
-
-
         [HttpGet("{id:int}")]
         public IActionResult Get(int id)
         {
-            var obj = _unitOfWork.Product.GetFirstOrDefault(u => u.ProductId == id, "Category");
+            var obj = _unitOfWork.Product.GetProductDetail(id);
             if (obj == null)
             {
                 return NotFound();

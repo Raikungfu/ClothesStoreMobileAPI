@@ -1,4 +1,5 @@
 ﻿using ClothesStoreMobileApplication.Models;
+using ClothesStoreMobileApplication.ViewModels.Product;
 
 namespace ClothesStoreMobileApplication.Repository.IRepository
 {
@@ -7,5 +8,7 @@ namespace ClothesStoreMobileApplication.Repository.IRepository
         void Update(Product product);
 
         IEnumerable<Product> GetProducts(bool orderByLatest = false, bool orderByMostDiscount = false, bool orderByMostSales = false, string includeProperties = null);
+
+        ProductDetailViewModel GetProductDetail(int id);
     }
 }

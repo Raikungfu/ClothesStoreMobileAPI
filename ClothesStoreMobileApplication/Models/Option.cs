@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace ClothesStoreMobileApplication.Models
 {
@@ -21,7 +22,8 @@ namespace ClothesStoreMobileApplication.Models
 
         public decimal? Price { get; set; }
 
-        public virtual ProductOption ProductOptions { get; set; }
-        public virtual Product Product { get; set; }
+        public ProductOption ProductOptions { get; set; }
+        [JsonIgnore]
+        public Product Product { get; set; }
     }
 }

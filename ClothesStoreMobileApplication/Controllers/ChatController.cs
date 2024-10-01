@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ClothesStoreMobileApplication.Models;
+using ClothesStoreMobileApplication.Repository;
 using ClothesStoreMobileApplication.Repository.IRepository;
 using ClothesStoreMobileApplication.Service;
 using ClothesStoreMobileApplication.ViewModels.Chat;
@@ -28,8 +29,8 @@ namespace ClothesStoreMobileApplication.Controllers
             return Ok(objList);
         }
 
-        [HttpGet("{id:int}")]
-        public IActionResult Get(int id, [FromQuery] string token)
+        [HttpGet("listchat")]
+        public IActionResult GetChat([FromQuery] string token)
         {
             var principal = KeyHelper.ValidateJwtToken(token);
 
@@ -47,7 +48,7 @@ namespace ClothesStoreMobileApplication.Controllers
 
             var userId = int.Parse(userIdClaim.Value);
 
-            var chatRooms = _unitOfWork.Chat.GetAll(u => u.UserId1 == userId || u.UserId2 == userId).ToList();
+            var chatRooms = _unitOfWork.Chat.GetChat(userId);
 
             if (chatRooms == null || !chatRooms.Any())
             {

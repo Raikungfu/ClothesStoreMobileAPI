@@ -82,7 +82,6 @@ namespace ClothesStoreMobileApplication.Repository
             NewPrice = x.NewPrice,
             OldPrice = x.OldPrice,
             QuantitySold = x.QuantitySold,
-            CategoryId = x.CategoryId,
             SellerId = x.SellerId,
             RatingPoint = x.Reviews.Any() ? x.Reviews.Average(r => r.Rating) : 0,
             RatingCount = x.Reviews.Count(),
@@ -95,23 +94,10 @@ namespace ClothesStoreMobileApplication.Repository
             }).ToList(),
             Seller = new SellerModel
             {
-                SellerId = x.Seller.SellerId,
+                Avt = x.Seller.Avt,
                 CompanyName = x.Seller.CompanyName,
                 Address = x.Seller.Address,
-                Phone = x.Seller.User.Phone,
-                Email = x.Seller.User.Email
-            },
-            Reviews = x.Reviews.Select(r => new ReviewModel
-            {
-                ReviewId = r.ReviewId,
-                Rating = r.Rating,
-                Comment = r.Comment,
-                Customer = new CustomerViewModel
-                {
-                    Name = r.Customer.Name,
-                    Avt = r.Customer.Avt
-                }
-            }).ToList()
+            }
         })
         .FirstOrDefault();
         }

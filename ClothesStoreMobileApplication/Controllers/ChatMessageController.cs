@@ -3,6 +3,7 @@ using ClothesStoreMobileApplication.Models;
 using ClothesStoreMobileApplication.Repository.IRepository;
 using ClothesStoreMobileApplication.Service;
 using ClothesStoreMobileApplication.ViewModels.ChatMessage;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,23 +30,10 @@ namespace ClothesStoreMobileApplication.Controllers
         }
 
         [HttpGet("room/{roomId}")]
-        public IActionResult GetChatMessagesByRoomId(int roomId, [FromQuery] string token)
+        [Authorize]
+        public IActionResult GetChatMessagesByRoomId(int roomId)
         {
-            var principal = KeyHelper.ValidateJwtToken(token);
-
-            if (principal == null)
-            {
-                return BadRequest("Invalid token");
-            }
-
-            var userIdClaim = principal.Claims.FirstOrDefault(c => c.Type == "Id");
-
-            if (userIdClaim == null)
-            {
-                return BadRequest("User ID not found in token.");
-            }
-
-            var userId = int.Parse(userIdClaim.Value);
+            int userId = int.Parse(User.FindFirst("Id")?.Value);
 
             var chatMessages = _unitOfWork.ChatMessage.GetAll(x => x.RoomId == roomId).Select(x => new
             {

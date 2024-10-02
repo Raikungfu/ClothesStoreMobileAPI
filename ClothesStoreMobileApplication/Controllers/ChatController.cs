@@ -4,6 +4,7 @@ using ClothesStoreMobileApplication.Repository;
 using ClothesStoreMobileApplication.Repository.IRepository;
 using ClothesStoreMobileApplication.Service;
 using ClothesStoreMobileApplication.ViewModels.Chat;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,23 +31,10 @@ namespace ClothesStoreMobileApplication.Controllers
         }
 
         [HttpGet("listchat")]
+        [Authorize]
         public IActionResult GetChat([FromQuery] string token)
         {
-            var principal = KeyHelper.ValidateJwtToken(token);
-
-            if (principal == null)
-            {
-                return Unauthorized("Invalid token.");
-            }
-
-            var userIdClaim = principal.Claims.FirstOrDefault(c => c.Type == "Id");
-
-            if (userIdClaim == null)
-            {
-                return BadRequest("User ID not found in token.");
-            }
-
-            var userId = int.Parse(userIdClaim.Value);
+            int userId = int.Parse(User.FindFirst("Id")?.Value);
 
             var chatRooms = _unitOfWork.Chat.GetChat(userId);
 

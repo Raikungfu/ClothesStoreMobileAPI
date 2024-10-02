@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ClothesStoreMobileApplication.Models;
 using ClothesStoreMobileApplication.Repository.IRepository;
+using ClothesStoreMobileApplication.Service;
 using ClothesStoreMobileApplication.ViewModels.ChatMessage;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -28,9 +29,35 @@ namespace ClothesStoreMobileApplication.Controllers
         }
 
         [HttpGet("room/{roomId}")]
-        public IActionResult GetChatMessagesByRoomId(int roomId)
+        public IActionResult GetChatMessagesByRoomId(int roomId, [FromQuery] string token)
         {
-            var chatMessages = _unitOfWork.ChatMessage.GetAll(x => x.RoomId == roomId);
+            var principal = KeyHelper.ValidateJwtToken(token);
+
+            if (principal == null)
+            {
+                return BadRequest("Invalid token");
+            }
+
+            var userIdClaim = principal.Claims.FirstOrDefault(c => c.Type == "Id");
+
+            if (userIdClaim == null)
+            {
+                return BadRequest("User ID not found in token.");
+            }
+
+            var userId = int.Parse(userIdClaim.Value);
+
+            var chatMessages = _unitOfWork.ChatMessage.GetAll(x => x.RoomId == roomId).Select(x => new
+            {
+                x.MessageId,
+                x.RoomId,
+                x.SenderId,
+                x.Content,
+                x.Media,
+                x.Icon,
+                x.Timestamp,
+                IsSender = x.SenderId == userId
+            });
             return Ok(chatMessages);
         }
 

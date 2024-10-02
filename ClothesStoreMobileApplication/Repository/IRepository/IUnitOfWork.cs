@@ -16,6 +16,8 @@
         ICartItemRepository CartItem { get; }
         IReviewRepository Review { get; }
         IReplyReviewRepository ReplyReview { get; }
+        IOrderRepository Order { get; }
+        IOrderItemRepository OrderItem { get; }
         void Save();
     }
 }

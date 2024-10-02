@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ClothesStoreMobileApplication.Controllers
 {
+    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class ForgotController : ControllerBase

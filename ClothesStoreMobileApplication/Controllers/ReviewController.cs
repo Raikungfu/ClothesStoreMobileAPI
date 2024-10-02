@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ClothesStoreMobileApplication.Repository.IRepository;
 using ClothesStoreMobileApplication.ViewModels.Review;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -47,6 +48,7 @@ namespace ClothesStoreMobileApplication.Controllers
             return Ok(objList);
         }
 
+        [AllowAnonymous]
         [HttpGet("GetReviewsForProduct/{productId}")]
         public IActionResult GetReviewsForProduct(int productId)
         {

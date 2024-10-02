@@ -1,4 +1,4 @@
-﻿namespace ClothesStoreMobileApplication.ViewModels.Product
+﻿namespace ClothesStoreMobileApplication.ViewModels.User
 {
     public class SellerModel
     {

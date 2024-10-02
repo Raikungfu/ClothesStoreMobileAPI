@@ -6,9 +6,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using ClothesStoreMobileApplication.ViewModels.User;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ClothesStoreMobileApplication.Controllers
 {
+    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase

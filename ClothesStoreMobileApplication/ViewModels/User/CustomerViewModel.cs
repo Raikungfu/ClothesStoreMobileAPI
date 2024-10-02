@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ClothesStoreMobileApplication.ViewModels.Product
+namespace ClothesStoreMobileApplication.ViewModels.User
 {
     public class CustomerViewModel
     {

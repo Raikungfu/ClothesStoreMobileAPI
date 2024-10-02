@@ -1,9 +1,11 @@
 ﻿using ClothesStoreMobileApplication.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClothesStoreMobileApplication.Controllers
 {
+    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductOptionController : ControllerBase

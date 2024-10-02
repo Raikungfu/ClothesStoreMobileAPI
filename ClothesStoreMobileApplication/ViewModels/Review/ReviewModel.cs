@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using ClothesStoreMobileApplication.ViewModels.User;
 
-namespace ClothesStoreMobileApplication.ViewModels.Product
+namespace ClothesStoreMobileApplication.ViewModels.Review
 {
     public class ReviewModel
     {

@@ -10,8 +10,8 @@ using ClothesStoreMobileApplication.Repository.IRepository;
 using ClothesStoreMobileApplication.Repository;
 using ClothesStoreMobileApplication.AutoMapper;
 using Microsoft.AspNetCore.SignalR;
-using ClothesStoreMobileApplication.Properties.Hubs;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using ClothesStoreMobileApplication.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -82,6 +82,22 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new RsaSecurityKey(KeyHelper.GetPublicKey()),
         ClockSkew = TimeSpan.Zero
     };
+
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var authorizationHeader = context.Request.Headers["Authorization"].ToString();
+
+            if (!string.IsNullOrEmpty(authorizationHeader) &&
+                authorizationHeader.StartsWith("Bearer "))
+            {
+                context.Token = authorizationHeader.Substring("Bearer ".Length).Trim();
+            }
+
+            return Task.CompletedTask;
+        }
+    };
 });
 
 builder.Services.AddAuthorization(options =>
@@ -115,6 +131,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapHub<HubClothesStore>("/hubClothesStore");
+app.MapHub<HubClothesStore<ChatMessage>>("/hubClothesStore/ChatMessage");
 
 app.Run();

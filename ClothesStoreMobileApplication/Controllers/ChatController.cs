@@ -36,7 +36,7 @@ namespace ClothesStoreMobileApplication.Controllers
 
             if (principal == null)
             {
-                return BadRequest("Invalid token");
+                return Unauthorized("Invalid token.");
             }
 
             var userIdClaim = principal.Claims.FirstOrDefault(c => c.Type == "Id");

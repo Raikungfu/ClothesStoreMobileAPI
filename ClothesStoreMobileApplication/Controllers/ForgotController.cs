@@ -12,6 +12,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Numerics;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ClothesStoreMobileApplication.Controllers
 {
@@ -61,17 +62,12 @@ namespace ClothesStoreMobileApplication.Controllers
 
 
         [HttpPost("verify-otp")]
+        [Authorize]
         public IActionResult VerifyOtp([FromBody] OtpModel otpModel)
         {
-            var principal = KeyHelper.ValidateJwtToken(otpModel.Token);
+            var emailClaim = User.FindFirst("Email")?.Value;
+            var otpClaim = User.FindFirst("OTP")?.Value;
 
-            if (principal == null)
-            {
-                return BadRequest(new { Message = "Invalid token." });
-            }
-
-            var emailClaim = principal.FindFirst("Email")?.Value;
-            var otpClaim = principal.FindFirst("OTP")?.Value;
 
             if (otpClaim == null || otpModel.Otp.ToString() != otpClaim)
             {
@@ -86,17 +82,10 @@ namespace ClothesStoreMobileApplication.Controllers
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordModel model)
         {
-            var principal = KeyHelper.ValidateJwtToken(model.Token);
+            var emailClaim = User.FindFirst("Email")?.Value;
+            var otpClaim = User.FindFirst("OTP")?.Value;
 
-            if (principal == null)
-            {
-                return BadRequest(new { Message = "Invalid token." });
-            }
-
-            var emailClaim = principal.FindFirst("Email")?.Value;
-            var otpClaim = principal.FindFirst("OTP")?.Value;
-
-            if(otpClaim != "8020")
+            if (otpClaim != "8020")
             {
                 return BadRequest(new { Message = "Invalid token." });
             }
@@ -152,6 +141,5 @@ namespace ClothesStoreMobileApplication.Controllers
     public class OtpModel
     {
         public int Otp { get; set; }
-        public String Token { get; set; }
     }
 }

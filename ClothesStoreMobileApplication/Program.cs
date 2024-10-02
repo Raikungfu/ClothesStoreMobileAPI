@@ -9,6 +9,9 @@ using ClothesStoreMobileApplication.Service;
 using ClothesStoreMobileApplication.Repository.IRepository;
 using ClothesStoreMobileApplication.Repository;
 using ClothesStoreMobileApplication.AutoMapper;
+using Microsoft.AspNetCore.SignalR;
+using ClothesStoreMobileApplication.Properties.Hubs;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,7 +66,7 @@ builder.Services.AddAutoMapper(typeof(ClothesStoreMapper));
 
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
@@ -76,7 +79,8 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = "RaiYugi",
         ValidAudience = "Saint",
-        IssuerSigningKey = new RsaSecurityKey(KeyHelper.GetPrivateKey())
+        IssuerSigningKey = new RsaSecurityKey(KeyHelper.GetPublicKey()),
+        ClockSkew = TimeSpan.Zero
     };
 });
 
@@ -103,10 +107,14 @@ app.UseSwaggerUI();
 
 app.UseSession();
 
+app.UseMiddleware<JwtMiddleware>();
+
 app.UseAuthentication();
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<HubClothesStore>("/hubClothesStore");
 
 app.Run();

@@ -9,6 +9,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using ClothesStoreMobileApplication.ViewModels.Product;
 using AutoMapper;
+using ClothesStoreMobileApplication.ViewModels.Option;
+using ClothesStoreMobileApplication.ViewModels.User;
 
 namespace ClothesStoreMobileApplication.Repository
 {

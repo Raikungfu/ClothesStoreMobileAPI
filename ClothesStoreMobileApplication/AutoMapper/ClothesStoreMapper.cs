@@ -4,6 +4,7 @@ using ClothesStoreMobileApplication.ViewModels.CartItem;
 using ClothesStoreMobileApplication.ViewModels.Category;
 using ClothesStoreMobileApplication.ViewModels.ChatMessage;
 using ClothesStoreMobileApplication.ViewModels.Option;
+using ClothesStoreMobileApplication.ViewModels.Order;
 using ClothesStoreMobileApplication.ViewModels.Product;
 using ClothesStoreMobileApplication.ViewModels.ReplyReview;
 using ClothesStoreMobileApplication.ViewModels.Review;
@@ -28,6 +29,7 @@ namespace ClothesStoreMobileApplication.AutoMapper
             CreateMap<Review, ReviewViewModel>().ReverseMap();
 
             CreateMap<ReplyReview, ReplyReviewViewModel>().ReverseMap();
+            CreateMap<Order, OrderCreateViewModel>().ReverseMap();
         }
     }
 }

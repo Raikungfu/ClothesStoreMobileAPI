@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace ClothesStoreMobileApplication.Models
 {
@@ -13,21 +14,21 @@ namespace ClothesStoreMobileApplication.Models
         public int? CustomerId { get; set; }
 
         [Required]
-        public string ShipName { get; set; }
+        public string? ShipName { get; set; }
 
         [Required]
         [EmailAddress]
-        public string ShipMail { get; set; }
+        public string? ShipMail { get; set; }
 
         [Required]
-        public string ShipPhone { get; set; }
+        public string? ShipPhone { get; set; }
 
         [Required]
-        public string ShipAddress { get; set; }
+        public string? ShipAddress { get; set; }
 
         public DateTime? OrderDate { get; set; } = DateTime.Now;
 
-        public int? ShipFee { get; set; }
+        public int? ShipFee { get; set; } = 2;
 
         public string? DiscountCode { get; set; }
 
@@ -39,6 +40,7 @@ namespace ClothesStoreMobileApplication.Models
 
         [Required]
         public string Status { get; set; } = "pending";
+        [JsonIgnore]
 
         public virtual Customer Customer { get; set; }
     }

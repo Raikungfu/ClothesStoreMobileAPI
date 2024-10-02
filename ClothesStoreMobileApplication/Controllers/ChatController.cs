@@ -32,7 +32,7 @@ namespace ClothesStoreMobileApplication.Controllers
 
         [HttpGet("listchat")]
         [Authorize]
-        public IActionResult GetChat([FromQuery] string token)
+        public IActionResult GetChat()
         {
             int userId = int.Parse(User.FindFirst("Id")?.Value);
 

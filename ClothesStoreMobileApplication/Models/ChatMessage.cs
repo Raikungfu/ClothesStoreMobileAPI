@@ -27,6 +27,7 @@ namespace ClothesStoreMobileApplication.Models
 
         [JsonIgnore]
         public virtual Chat Chat { get; set; }
+
         [JsonIgnore]
         public virtual User User { get; set; }
     }

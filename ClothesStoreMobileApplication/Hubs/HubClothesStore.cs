@@ -3,27 +3,28 @@ using Azure;
 using ClothesStoreMobileApplication.Models;
 using ClothesStoreMobileApplication.Repository.IRepository;
 using ClothesStoreMobileApplication.Service;
+using ClothesStoreMobileApplication.Service.IService;
 using ClothesStoreMobileApplication.ViewModels.Chat;
 using ClothesStoreMobileApplication.ViewModels.ChatMessage;
 using ClothesStoreMobileApplication.ViewModels.HubsViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 using System.Runtime.Intrinsics.X86;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace ClothesStoreMobileApplication.Hubs
 {
-
     [AllowAnonymous]
     public class HubClothesStore<T> : Hub
     {
-        private readonly ConnectionMappingService _connectionService;
+        private readonly IConnectionMappingService _connectionService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public HubClothesStore(ConnectionMappingService connectionService, IUnitOfWork unitOfWork, IMapper mapper)
+        public HubClothesStore(IUnitOfWork unitOfWork, IMapper mapper, IConnectionMappingService connectionService)
         {
             _connectionService = connectionService;
             _unitOfWork = unitOfWork;
@@ -62,7 +63,7 @@ namespace ClothesStoreMobileApplication.Hubs
                     Status = "Error",
                     Content = "User not found or invalid ID"
                 };
-                await Clients.Caller.SendAsync("ReceiveMessage", response);
+                await Clients.Caller.SendAsync("ErrorMessage", response);
                 return;
             }
 
@@ -76,7 +77,7 @@ namespace ClothesStoreMobileApplication.Hubs
                     Status = "Error",
                     Content = "Room not found"
                 };
-                await Clients.Caller.SendAsync("ReceiveMessage", response);
+                await Clients.Caller.SendAsync("ErrorMessage", response);
                 return;
             }
 
@@ -87,7 +88,7 @@ namespace ClothesStoreMobileApplication.Hubs
                     Status = "Error",
                     Content = "Sender not in the room"
                 };
-                await Clients.Caller.SendAsync("ReceiveMessage", response);
+                await Clients.Caller.SendAsync("ErrorMessage", response);
                 return;
             }
 
@@ -95,20 +96,8 @@ namespace ClothesStoreMobileApplication.Hubs
             _unitOfWork.ChatMessage.Add(chatMessage);
             _unitOfWork.Save();
 
-            var idReceiver = _unitOfWork.Chat.GetFirstOrDefault(x => x.RoomId == chatMessageViewModel.RoomId);
-            if (idReceiver == null)
-            {
-                var response = new MessageResponseViewModel
-                {
-                    Status = "Error",
-                    Content = "Receiver not found"
-                };
-                await Clients.Caller.SendAsync("ReceiveMessage", response);
-                return;
-            }
-
-            var receiverId = idReceiver.UserId1 == senderId ? idReceiver.UserId2.ToString() : idReceiver.UserId1.ToString();
-            chatMessageViewModel.IsSender = idReceiver.UserId1 == senderId;
+            var receiverId = room.UserId1 == senderId ? room.UserId2.ToString() : room.UserId1.ToString();
+            chatMessageViewModel.IsSender = room.UserId1 == senderId;
             var messageResponse = new MessageResponseViewModel
             {
                 Status = "Success",
@@ -143,7 +132,7 @@ namespace ClothesStoreMobileApplication.Hubs
             if (userIdClaim != null)
             {
                 var userId = userIdClaim.Value;
-                _connectionService.AddConnection(int.Parse(userId), Context.ConnectionId);
+                _connectionService.AddUserConnection(userId, Context.ConnectionId);
 
                 await Groups.AddToGroupAsync(Context.ConnectionId, userIdClaim.Value);
                 await base.OnConnectedAsync();
@@ -152,7 +141,7 @@ namespace ClothesStoreMobileApplication.Hubs
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            _connectionService.RemoveConnection(Context.ConnectionId);
+            _connectionService.RemoveUserConnection(Context.ConnectionId);
             var userIdClaim = Context.User?.FindFirst("Id");
             if(userIdClaim != null) await Groups.RemoveFromGroupAsync(Context.ConnectionId, userIdClaim.Value);
             await base.OnDisconnectedAsync(exception);

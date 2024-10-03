@@ -72,7 +72,7 @@ namespace ClothesStoreMobileApplication.Repository
 
         public ProductDetailViewModel GetProductDetail(int id)
         {
-            return _db.Products
+            return _db.Products.AsNoTracking()
             .Where(x => x.ProductId == id)
         .Select(x => new ProductDetailViewModel
         {

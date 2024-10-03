@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using ClothesStoreMobileApplication.Hubs;
 using ClothesStoreMobileApplication.ViewModels.ChatMessage;
+using ClothesStoreMobileApplication.Service.IService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -139,7 +140,12 @@ builder.Services.AddAuthorization(options =>
             policy.RequireClaim(ClaimTypes.Role, "Customer"));
 });
 
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(hubOptions =>
+{
+    hubOptions.EnableDetailedErrors = true;
+});
+
+builder.Services.AddSingleton<IConnectionMappingService, ConnectionMappingService>();
 
 var app = builder.Build();
 

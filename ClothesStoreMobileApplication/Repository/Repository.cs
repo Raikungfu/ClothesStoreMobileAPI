@@ -1,4 +1,4 @@
-﻿namespace ClothesStoreMobileApplication.Repository
+﻿namespace ClothesStoreMobileApplication.Repository.DataAccess.Repository
 {
     using ClothesStoreMobileApplication.Models;
     using ClothesStoreMobileApplication.Repository.IRepository;
@@ -7,92 +7,94 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
-    using System.Text;
-    using System.Threading.Tasks;
 
-    namespace DataAccess.Repository
+    public class Repository<T> : IRepository<T> where T : class
     {
-        public class Repository<T> : IRepository<T> where T : class
+        private readonly ClothesStoreContext _db;
+        private readonly DbSet<T> _dbSet;
+
+        public Repository(ClothesStoreContext db)
         {
-            private readonly ClothesStoreContext _db;
-            internal DbSet<T> dbSet;
-            public Repository(ClothesStoreContext db)
+            _db = db;
+            _dbSet = _db.Set<T>();
+        }
+
+        public void Add(T entity)
+        {
+            _dbSet.Add(entity);
+        }
+
+        public void AddRange(IEnumerable<T> entities)
+        {
+            _dbSet.AddRange(entities);
+        }
+
+        public T Get(int id)
+        {
+            return _dbSet.Find(id);
+        }
+
+        public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter = null,
+                                     Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+                                     string? includeProperties = null)
+        {
+            IQueryable<T> query = _dbSet;
+
+            if (filter != null)
             {
-                _db = db;
-                this.dbSet = _db.Set<T>();
-            }
-            public void Add(T entity)
-            {
-                dbSet.Add(entity);
+                query = query.Where(filter);
             }
 
-            public void AddRange(IEnumerable<T> entities)
+            if (includeProperties != null)
             {
-                dbSet.AddRange(entities);
-            }
-
-            public T Get(int id)
-            {
-                T entity = dbSet.Find(id);
-                return entity;
-            }
-
-            public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter = null,
-                                 Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null
-                                , string? includeProperties = null)
-            {
-                IQueryable<T> query = dbSet;
-                if (filter != null)
+                foreach (var includeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    query = query.Where(filter);
+                    query = query.Include(includeProp);
                 }
-                if (includeProperties != null)
-                {
-                    foreach (var includeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-                    {
-                        query = query.Include(includeProp);
-                    }
-                }
-                if (orderBy != null)
-                {
-                    return orderBy(query).ToList();
-                }
-                return query.ToList();
             }
 
-            public T GetFirstOrDefault(Expression<Func<T, bool>>? filter = null, string? includeProperties = null)
+            if (orderBy != null)
             {
-                IQueryable<T> query = dbSet;
-                if (filter != null)
+                return orderBy(query).AsNoTracking().ToList();
+            }
+
+            return query.AsNoTracking().ToList();
+        }
+
+        public T GetFirstOrDefault(Expression<Func<T, bool>>? filter = null, string? includeProperties = null)
+        {
+            IQueryable<T> query = _dbSet;
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            if (includeProperties != null)
+            {
+                foreach (var includeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    query = query.Where(filter);
+                    query = query.Include(includeProp);
                 }
-                if (includeProperties != null)
-                {
-                    foreach (var includeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-                    {
-                        query = query.Include(includeProp);
-                    }
-                }
-                return query.FirstOrDefault();
             }
 
-            public void Remove(T entity)
-            {
-                dbSet.Remove(entity);
-            }
+            return query.AsNoTracking().FirstOrDefault();
+        }
 
-            public void Remove(int id)
-            {
-                T entity = dbSet.Find(id);
-                Remove(entity);
-            }
+        public void Remove(T entity)
+        {
+            _dbSet.Remove(entity);
+        }
 
-            public void RemoveRange(IEnumerable<T> entities)
-            {
-                dbSet.RemoveRange(entities);
-            }
+        public void Remove(int id)
+        {
+            T entity = _dbSet.Find(id);
+            Remove(entity);
+        }
+
+        public void RemoveRange(IEnumerable<T> entities)
+        {
+            _dbSet.RemoveRange(entities);
         }
     }
-
 }

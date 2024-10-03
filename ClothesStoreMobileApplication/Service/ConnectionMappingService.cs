@@ -1,29 +1,45 @@
-﻿using ClothesStoreMobileApplication.ViewModels.HubsViewModel;
+﻿using ClothesStoreMobileApplication.Service.IService;
+using ClothesStoreMobileApplication.ViewModels.HubsViewModel;
 
 namespace ClothesStoreMobileApplication.Service
 {
-    public class ConnectionMappingService
+    public class ConnectionMappingService : IConnectionMappingService
     {
-        private readonly Dictionary<string, int> _connections = new Dictionary<string, int>();
+        private readonly Dictionary<string, List<string>> _userConnections = new Dictionary<string, List<string>>();
 
-        public void AddConnection(int id, string connectionId)
+        public Task AddUserConnection(string userId, string connectionId)
         {
-            _connections[connectionId] = id;
+            if (!_userConnections.ContainsKey(userId))
+            {
+                _userConnections[userId] = new List<string>();
+            }
+
+            _userConnections[userId].Add(connectionId);
+            return Task.CompletedTask;
         }
 
-        public void RemoveConnection(string connect)
+        public Task RemoveUserConnection(string connectionId)
         {
-            _connections.Remove(connect);
+            foreach (var userId in _userConnections.Keys.ToList())
+            {
+                _userConnections[userId].Remove(connectionId);
+                if (!_userConnections[userId].Any())
+                {
+                    _userConnections.Remove(userId);
+                }
+            }
+            return Task.CompletedTask;
         }
 
-        public int GetId(string connect)
+        public string GetUserId(string connectionId)
         {
-            return _connections[connect];
+            return _userConnections.FirstOrDefault(x => x.Value.Contains(connectionId)).Key;
         }
 
-        public List<string> GetConnect(int id)
+        public List<string> GetConnectionIds(string userId)
         {
-            return _connections.Where(x => x.Value == id).Select(x => x.Key).ToList();
+            _userConnections.TryGetValue(userId, out var connectionIds);
+            return connectionIds ?? new List<string>();
         }
     }
 }

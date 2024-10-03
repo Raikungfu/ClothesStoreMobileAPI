@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using Azure;
 using ClothesStoreMobileApplication.Models;
 using ClothesStoreMobileApplication.Repository.IRepository;
 using ClothesStoreMobileApplication.Service;
 using ClothesStoreMobileApplication.ViewModels.Chat;
 using ClothesStoreMobileApplication.ViewModels.ChatMessage;
 using ClothesStoreMobileApplication.ViewModels.HubsViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Hosting;
 using System.Runtime.Intrinsics.X86;
@@ -13,6 +15,8 @@ using System.Threading.Tasks;
 
 namespace ClothesStoreMobileApplication.Hubs
 {
+
+    [AllowAnonymous]
     public class HubClothesStore<T> : Hub
     {
         private readonly ConnectionMappingService _connectionService;
@@ -26,7 +30,7 @@ namespace ClothesStoreMobileApplication.Hubs
             _mapper = mapper;
         }
 
-        public async Task SendMessage(T message)
+        public async Task SendMessage(int receiver, T message)
         {
             await Clients.All.SendAsync("ReceiveMessage", message);
         }
@@ -46,9 +50,11 @@ namespace ClothesStoreMobileApplication.Hubs
             await Clients.All.SendAsync("ReceivePostUpdate", post);
         }
 
-        public async Task SendMessageToUser(ChatMessageViewModel chatMessageVM)
+        public async Task SendMessageToUser(T message)
         {
+            ChatMessageViewModel chatMessageViewModel = message as ChatMessageViewModel;
             var userIdClaim = Context.User?.FindFirst("Id");
+
             if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int senderId))
             {
                 var response = new MessageResponseViewModel
@@ -59,9 +65,10 @@ namespace ClothesStoreMobileApplication.Hubs
                 await Clients.Caller.SendAsync("ReceiveMessage", response);
                 return;
             }
-            chatMessageVM.SenderId = senderId;
 
-            var room = _unitOfWork.Chat.GetFirstOrDefault(x => x.RoomId == chatMessageVM.RoomId);
+            chatMessageViewModel.SenderId = senderId;
+
+            var room = _unitOfWork.Chat.GetFirstOrDefault(x => x.RoomId == chatMessageViewModel.RoomId);
             if (room == null)
             {
                 var response = new MessageResponseViewModel
@@ -84,11 +91,11 @@ namespace ClothesStoreMobileApplication.Hubs
                 return;
             }
 
-            var chatMessage = _mapper.Map<ChatMessage>(chatMessageVM);
+            var chatMessage = _mapper.Map<ChatMessage>(chatMessageViewModel);
             _unitOfWork.ChatMessage.Add(chatMessage);
             _unitOfWork.Save();
 
-            var idReceiver = _unitOfWork.Chat.GetFirstOrDefault(x => x.RoomId == chatMessageVM.RoomId);
+            var idReceiver = _unitOfWork.Chat.GetFirstOrDefault(x => x.RoomId == chatMessageViewModel.RoomId);
             if (idReceiver == null)
             {
                 var response = new MessageResponseViewModel
@@ -101,15 +108,11 @@ namespace ClothesStoreMobileApplication.Hubs
             }
 
             var receiverId = idReceiver.UserId1 == senderId ? idReceiver.UserId2.ToString() : idReceiver.UserId1.ToString();
+            chatMessageViewModel.IsSender = idReceiver.UserId1 == senderId;
             var messageResponse = new MessageResponseViewModel
             {
                 Status = "Success",
-                Content = chatMessageVM.Content,
-                SenderId = chatMessageVM.SenderId.ToString(),
-                RoomId = chatMessageVM.RoomId,
-                Media = chatMessageVM.Media,
-                Icon = chatMessageVM.Icon,
-                Timestamp = DateTime.UtcNow
+                Response = chatMessageViewModel
             };
 
             await Clients.User(receiverId).SendAsync("ReceiveMessage", messageResponse);

@@ -15,5 +15,7 @@ namespace ClothesStoreMobileApplication.ViewModels.ChatMessage
         public string? Icon { get; set; }
 
         public DateTime Timestamp { get; set; } = DateTime.Now;
+
+        public bool? IsSender { get; set; }
     }
 }

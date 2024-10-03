@@ -1,4 +1,4 @@
-using ClothesStoreMobileApplication.Models;
+﻿using ClothesStoreMobileApplication.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -12,6 +12,7 @@ using ClothesStoreMobileApplication.AutoMapper;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using ClothesStoreMobileApplication.Hubs;
+using ClothesStoreMobileApplication.ViewModels.ChatMessage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,7 +62,7 @@ builder.Services.AddCors(options =>
               .WithExposedHeaders("Authorization");
     });
 });
-
+builder.Services.AddSingleton<ConnectionMappingService>();
 builder.Services.AddAutoMapper(typeof(ClothesStoreMapper));
 
 builder.Services.AddAuthentication(options =>
@@ -86,15 +87,43 @@ builder.Services.AddAuthentication(options =>
     options.Events = new JwtBearerEvents
     {
         OnMessageReceived = context =>
-        {
-            var authorizationHeader = context.Request.Headers["Authorization"].ToString();
+         {
+             var authorizationHeader = context.Request.Headers["Authorization"].ToString();
 
-            if (!string.IsNullOrEmpty(authorizationHeader) &&
-                authorizationHeader.StartsWith("Bearer "))
+             if (!string.IsNullOrEmpty(authorizationHeader) &&
+                 authorizationHeader.StartsWith("Bearer "))
+             {
+                 context.Token = authorizationHeader.Substring("Bearer ".Length).Trim();
+             }
+
+             return Task.CompletedTask;
+         },
+
+        OnTokenValidated = context =>
+        {
+            Console.WriteLine("Authorize token successfull: " + context.SecurityToken);
+            var claimsIdentity = context.Principal.Identity as ClaimsIdentity;
+
+            var userIdClaim = claimsIdentity?.FindFirst("Id");
+
+            if (userIdClaim == null)
             {
-                context.Token = authorizationHeader.Substring("Bearer ".Length).Trim();
+                context.Fail("Token không chứa thông tin người dùng hợp lệ");
+                return Task.CompletedTask;
             }
 
+            return Task.CompletedTask;
+        },
+
+        OnAuthenticationFailed = context =>
+        {
+            Console.WriteLine("Authorize token failed: " + context.Exception.Message);
+            return Task.CompletedTask;
+        },
+
+        OnChallenge = context =>
+        {
+            Console.WriteLine("Authorize token failded! Not findout token...");
             return Task.CompletedTask;
         }
     };
@@ -120,6 +149,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 // app.UseHttpsRedirection();
+app.UseRouting();
 
 app.UseSession();
 
@@ -131,6 +161,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapHub<HubClothesStore<ChatMessage>>("/hubClothesStore/ChatMessage");
+app.MapHub<HubClothesStore<ChatMessageViewModel>>("/hubClothesStore/ChatMessage");
 
 app.Run();

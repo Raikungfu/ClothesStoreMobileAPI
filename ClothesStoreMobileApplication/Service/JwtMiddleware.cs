@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
@@ -16,6 +17,13 @@ namespace ClothesStoreMobileApplication.Service
 
         public async Task Invoke(HttpContext context)
         {
+            var endpoint = context.GetEndpoint();
+            if (endpoint != null && endpoint.Metadata.GetMetadata<IAllowAnonymous>() != null)
+            {
+                await _next(context);
+                return;
+            }
+
             var token = context.Request.Headers["Authorization"].ToString()?.Replace("Bearer ", "");
 
             if (!string.IsNullOrEmpty(token))
@@ -43,6 +51,13 @@ namespace ClothesStoreMobileApplication.Service
                     return;
                 }
             }
+            else
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                await context.Response.WriteAsync("Unauthorized");
+                return;
+            }
+
 
             await _next(context);
         }

@@ -51,7 +51,7 @@ namespace ClothesStoreMobileApplication.Hubs
             await Clients.All.SendAsync("ReceivePostUpdate", post);
         }
 
-        public async Task SendMessageToUser(T message)
+        public async Task<MessageResponseViewModel> SendMessageToUser(T message)
         {
             ChatMessageViewModel chatMessageViewModel = message as ChatMessageViewModel;
             var userIdClaim = Context.User?.FindFirst("Id");
@@ -64,7 +64,7 @@ namespace ClothesStoreMobileApplication.Hubs
                     Content = "User not found or invalid ID"
                 };
                 await Clients.Caller.SendAsync("ErrorMessage", response);
-                return;
+                return response;
             }
 
             chatMessageViewModel.SenderId = senderId;
@@ -78,7 +78,7 @@ namespace ClothesStoreMobileApplication.Hubs
                     Content = "Room not found"
                 };
                 await Clients.Caller.SendAsync("ErrorMessage", response);
-                return;
+                return response;
             }
 
             if (senderId != room.UserId1 && senderId != room.UserId2)
@@ -89,7 +89,7 @@ namespace ClothesStoreMobileApplication.Hubs
                     Content = "Sender not in the room"
                 };
                 await Clients.Caller.SendAsync("ErrorMessage", response);
-                return;
+                return response;
             }
 
             var chatMessage = _mapper.Map<ChatMessage>(chatMessageViewModel);
@@ -104,7 +104,8 @@ namespace ClothesStoreMobileApplication.Hubs
                 Response = chatMessageViewModel
             };
 
-            await Clients.User(receiverId).SendAsync("ReceiveMessage", messageResponse);
+            await Clients.Users(_connectionService.GetConnectionIds(receiverId)).SendAsync("ReceiveMessage", messageResponse);
+            return messageResponse;
         }
 
         public async Task SendMessageToUsers(List<string> ids, T message)
@@ -134,7 +135,7 @@ namespace ClothesStoreMobileApplication.Hubs
                 var userId = userIdClaim.Value;
                 _connectionService.AddUserConnection(userId, Context.ConnectionId);
 
-                await Groups.AddToGroupAsync(Context.ConnectionId, userIdClaim.Value);
+                await Groups.AddToGroupAsync("ClothesStore", userIdClaim.Value);
                 await base.OnConnectedAsync();
             }
         }
@@ -142,8 +143,10 @@ namespace ClothesStoreMobileApplication.Hubs
         public override async Task OnDisconnectedAsync(Exception exception)
         {
             _connectionService.RemoveUserConnection(Context.ConnectionId);
+
             var userIdClaim = Context.User?.FindFirst("Id");
-            if(userIdClaim != null) await Groups.RemoveFromGroupAsync(Context.ConnectionId, userIdClaim.Value);
+
+            if(userIdClaim != null) await Groups.RemoveFromGroupAsync("ClothesStore", userIdClaim.Value);
             await base.OnDisconnectedAsync(exception);
         }
 

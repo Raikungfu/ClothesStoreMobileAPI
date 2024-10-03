@@ -48,6 +48,17 @@ namespace ClothesStoreMobileApplication.Controllers
             return Ok(obj);
         }
 
+        [HttpGet("GetOrderItem/{userId:int}", Name = "GetOrderByUserId")]
+        public IActionResult GetOrderItem(int userId)
+        {
+            var obj = _unitOfWork.Order.GetAll(u => u.Customer.User.UserId == userId);
+            if (obj == null)
+            {
+                return NotFound();
+            }
+            return Ok(obj);
+        }
+
 
         [HttpPost]
         public IActionResult Post([FromBody] OrderCreateViewModel OrderVM)

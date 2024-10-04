@@ -15,7 +15,7 @@ namespace ClothesStoreMobileApplication.Repository
             _db = db;
         }
 
-        public List<ListChatViewModel> GetChat(int id)
+        public List<ListChatViewModel> GetChat(int id, int page)
         {
             var chats = _db.Chats
                 .AsNoTracking()
@@ -55,7 +55,7 @@ namespace ClothesStoreMobileApplication.Repository
             })
                 .Distinct()
                 .OrderBy(c => c.LatestMessageTime)
-                .Skip(id * 15)
+                .Skip(page * 15)
                 .Take(15)
                 .ToList();
 

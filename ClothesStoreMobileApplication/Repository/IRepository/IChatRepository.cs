@@ -5,6 +5,6 @@ namespace ClothesStoreMobileApplication.Repository.IRepository
 {
     public interface IChatRepository : IRepository<Chat>
     {
-        List<ListChatViewModel> GetChat(int id);
+        List<ListChatViewModel> GetChat(int id, int page);
     }
 }

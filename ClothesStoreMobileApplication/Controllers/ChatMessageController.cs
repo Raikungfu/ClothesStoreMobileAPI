@@ -41,8 +41,8 @@ namespace ClothesStoreMobileApplication.Controllers
             }
 
             var chatMessages = _unitOfWork.ChatMessage.GetAll(x => x.RoomId == roomId).OrderByDescending(x => x.Timestamp)
-                .Skip(page * 10)
-                .Take(10)
+                .Skip(page * 15)
+                .Take(15)
                 .Select(x => new { x.MessageId, x.RoomId, x.SenderId, x.Content, x.Media, x.Icon,x.Timestamp, IsSender = x.SenderId == userId }).ToList();
 
             return Ok(chatMessages);

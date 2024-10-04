@@ -33,7 +33,7 @@ namespace ClothesStoreMobileApplication.Controllers
 
         [HttpGet("listchat")]
         [Authorize]
-        public IActionResult GetChat()
+        public IActionResult GetChat(int page = 0)
         {
             var claimValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(claimValue) || !int.TryParse(claimValue, out int userId))
@@ -41,7 +41,7 @@ namespace ClothesStoreMobileApplication.Controllers
                 return Unauthorized("User not logged in. Please log in to continue.");
             }
 
-            var chatRooms = _unitOfWork.Chat.GetChat(userId);
+            var chatRooms = _unitOfWork.Chat.GetChat(userId, page);
 
             if (chatRooms == null || !chatRooms.Any())
             {

@@ -38,7 +38,7 @@ namespace ClothesStoreMobileApplication.Controllers
             var claimValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(claimValue) || !int.TryParse(claimValue, out int userId))
             {
-                throw new Exception("User ID claim is missing or invalid.");
+                return Unauthorized("User not logged in. Please log in to continue.");
             }
 
             var chatRooms = _unitOfWork.Chat.GetChat(userId);
@@ -52,17 +52,28 @@ namespace ClothesStoreMobileApplication.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post(ChatViewModel chatvm)
+        public IActionResult Post([FromBody] ChatViewModel chatvm)
         {
+            var claimValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(claimValue) || !int.TryParse(claimValue, out int userId))
+            {
+                return Unauthorized("User not logged in. Please log in to continue.");
+            }
+
+            if (userId == chatvm.userIdOther)
+            {
+                return BadRequest("You cannot chat with yourself.");
+            }
+
             try
             {
-                var obj = _unitOfWork.Chat.GetFirstOrDefault(u => u.UserId1 == chatvm.UserId1 && u.UserId2 == chatvm.UserId2);
+                var obj = _unitOfWork.Chat.GetFirstOrDefault(u => (u.UserId1 == userId && u.UserId2 == chatvm.userIdOther) || (u.UserId2 == userId && u.UserId1 == chatvm.userIdOther));
                 if (obj == null)
                 {
                     var chat = new Chat
                     {
-                        UserId1 = chatvm.UserId1,
-                        UserId2 = chatvm.UserId2
+                        UserId1 = userId,
+                        UserId2 = chatvm.userIdOther
                     };
                     _unitOfWork.Chat.Add(chat);
                     _unitOfWork.Save();
@@ -70,12 +81,12 @@ namespace ClothesStoreMobileApplication.Controllers
                 }
                 else
                 {
-                    return BadRequest("This Room is created before or seller!");
+                    return Ok(obj);
                 }
             }
             catch (Exception ex)
             {
-                return BadRequest("Customer or Seller does not exist");
+                return BadRequest(ex.Message);
             }
             
         }

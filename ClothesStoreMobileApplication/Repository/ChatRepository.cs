@@ -25,21 +25,24 @@ namespace ClothesStoreMobileApplication.Repository
 
             var userIds = chats.Select(c => c.UserId1 == id ? c.UserId2 : c.UserId1).Distinct().ToList();
 
-            var users = _db.Users
-                .Where(u => userIds.Contains(u.UserId))
-                .Select(u => new
-                {
-                    u.UserId,
-                    Name = u.UserType == UserType.Seller
-                        ? _db.Sellers.Where(s => s.UserId == u.UserId).Select(s => s.CompanyName).FirstOrDefault()
-                        : u.UserType == UserType.Customer
-                            ? _db.Customers.Where(cus => cus.UserId == u.UserId).Select(cus => cus.Name).FirstOrDefault()
-                            : u.Username,
-                    Avatar = u.UserType == UserType.Seller
-                        ? _db.Sellers.Where(s => s.UserId == u.UserId).Select(s => s.Avt).FirstOrDefault()
-                        : _db.Customers.Where(cus => cus.UserId == u.UserId).Select(cus => cus.Avt).FirstOrDefault()
-                })
-                .ToList();
+            var users = (from u in _db.Users
+                         where userIds.Contains(u.UserId)
+                         join s in _db.Sellers on u.UserId equals s.UserId into sellerGroup
+                         from seller in sellerGroup.DefaultIfEmpty()
+                         join c in _db.Customers on u.UserId equals c.UserId into customerGroup
+                         from customer in customerGroup.DefaultIfEmpty()
+                         join a in _db.Admins on u.UserId equals a.UserId into adminGroup
+                         from admin in adminGroup.DefaultIfEmpty()
+                         select new
+                         {
+                             u.UserId,
+                             Name = u.UserType == UserType.Seller ? seller.CompanyName
+                                  : u.UserType == UserType.Customer ? customer.Name
+                                  : u.Username,
+                             Avatar = u.UserType == UserType.Seller ? seller.Avt
+                                    : u.UserType == UserType.Customer ? customer.Avt
+                                    : admin.Avt
+                         }).ToList();
 
             var result = chats.Select(c => new ListChatViewModel
             {
@@ -50,8 +53,11 @@ namespace ClothesStoreMobileApplication.Repository
                 LatestMessage = c.ChatMessages.OrderByDescending(m => m.Timestamp).Select(m => m.Content).FirstOrDefault(),
                 LatestMessageTime = c.ChatMessages.OrderByDescending(m => m.Timestamp).Select(m => m.Timestamp).FirstOrDefault(),
             })
-            .Distinct()
-            .ToList();
+                .Distinct()
+                .OrderBy(c => c.LatestMessageTime)
+                .Skip(id * 15)
+                .Take(15)
+                .ToList();
 
             return result;
         }

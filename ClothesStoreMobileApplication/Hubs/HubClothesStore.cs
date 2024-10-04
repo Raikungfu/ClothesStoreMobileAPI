@@ -54,7 +54,7 @@ namespace ClothesStoreMobileApplication.Hubs
         public async Task<MessageResponseViewModel> SendMessageToUser(T message)
         {
             ChatMessageViewModel chatMessageViewModel = message as ChatMessageViewModel;
-            var userIdClaim = Context.User?.FindFirst("Id");
+            var userIdClaim = Context.User?.FindFirst(ClaimTypes.NameIdentifier);
 
             if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int senderId))
             {
@@ -97,14 +97,19 @@ namespace ClothesStoreMobileApplication.Hubs
             _unitOfWork.Save();
 
             var receiverId = room.UserId1 == senderId ? room.UserId2.ToString() : room.UserId1.ToString();
-            chatMessageViewModel.IsSender = room.UserId1 == senderId;
+            chatMessageViewModel.MessageId = chatMessage.MessageId;
+            chatMessageViewModel.IsSender = false;
+
             var messageResponse = new MessageResponseViewModel
             {
                 Status = "Success",
+                Content = null,
                 Response = chatMessageViewModel
             };
 
-            await Clients.Users(_connectionService.GetConnectionIds(receiverId)).SendAsync("ReceiveMessage", messageResponse);
+            await Clients.User(receiverId).SendAsync("ReceiveMessage", messageResponse);
+
+            messageResponse.Response.IsSender = true;
             return messageResponse;
         }
 
@@ -115,7 +120,7 @@ namespace ClothesStoreMobileApplication.Hubs
 
         public async Task SendMessageToCurrentUser(string message)
         {
-            var userId = Context.User?.FindFirst("Id");
+            var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier);
 
             if (userId == null)
             {
@@ -129,7 +134,7 @@ namespace ClothesStoreMobileApplication.Hubs
 
         public override async Task OnConnectedAsync()
         {
-            var userIdClaim = Context.User?.FindFirst("Id");
+            var userIdClaim = Context.User?.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim != null)
             {
                 var userId = userIdClaim.Value;
@@ -144,7 +149,7 @@ namespace ClothesStoreMobileApplication.Hubs
         {
             _connectionService.RemoveUserConnection(Context.ConnectionId);
 
-            var userIdClaim = Context.User?.FindFirst("Id");
+            var userIdClaim = Context.User?.FindFirst(ClaimTypes.NameIdentifier);
 
             if(userIdClaim != null) await Groups.RemoveFromGroupAsync("ClothesStore", userIdClaim.Value);
             await base.OnDisconnectedAsync(exception);

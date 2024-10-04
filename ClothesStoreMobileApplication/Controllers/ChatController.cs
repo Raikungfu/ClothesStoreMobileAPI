@@ -7,6 +7,7 @@ using ClothesStoreMobileApplication.ViewModels.Chat;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ClothesStoreMobileApplication.Controllers
 {
@@ -34,7 +35,11 @@ namespace ClothesStoreMobileApplication.Controllers
         [Authorize]
         public IActionResult GetChat()
         {
-            int userId = int.Parse(User.FindFirst("Id")?.Value);
+            var claimValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(claimValue) || !int.TryParse(claimValue, out int userId))
+            {
+                throw new Exception("User ID claim is missing or invalid.");
+            }
 
             var chatRooms = _unitOfWork.Chat.GetChat(userId);
 

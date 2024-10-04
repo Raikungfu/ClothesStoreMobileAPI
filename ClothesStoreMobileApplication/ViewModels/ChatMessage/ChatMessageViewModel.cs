@@ -4,6 +4,8 @@ namespace ClothesStoreMobileApplication.ViewModels.ChatMessage
 {
     public class ChatMessageViewModel
     {
+        public int MessageId { get; set; }
+
         public int RoomId { get; set; }
 
         public int SenderId { get; set; }

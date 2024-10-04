@@ -41,6 +41,13 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.IgnoreNullValues = true;
     });
 
+builder.Services.AddSignalR()
+    .AddJsonProtocol(options =>
+    {
+        options.PayloadSerializerOptions.PropertyNamingPolicy = null;
+        options.PayloadSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+    });
+
 builder.Services.AddDistributedMemoryCache();
 
 builder.Services.AddSession(options =>
@@ -105,7 +112,7 @@ builder.Services.AddAuthentication(options =>
             Console.WriteLine("Authorize token successfull: " + context.SecurityToken);
             var claimsIdentity = context.Principal.Identity as ClaimsIdentity;
 
-            var userIdClaim = claimsIdentity?.FindFirst("Id");
+            var userIdClaim = claimsIdentity?.FindFirst(ClaimTypes.NameIdentifier);
 
             if (userIdClaim == null)
             {

@@ -6,6 +6,7 @@ using ClothesStoreMobileApplication.ViewModels.ChatMessage;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ClothesStoreMobileApplication.Controllers
 {
@@ -31,21 +32,19 @@ namespace ClothesStoreMobileApplication.Controllers
 
         [HttpGet("room/{roomId}")]
         [Authorize]
-        public IActionResult GetChatMessagesByRoomId(int roomId)
+        public IActionResult GetChatMessagesByRoomId(int roomId, int page = 0)
         {
-            int userId = int.Parse(User.FindFirst("Id")?.Value);
-
-            var chatMessages = _unitOfWork.ChatMessage.GetAll(x => x.RoomId == roomId).Select(x => new
+            var claimValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(claimValue) || !int.TryParse(claimValue, out int userId))
             {
-                x.MessageId,
-                x.RoomId,
-                x.SenderId,
-                x.Content,
-                x.Media,
-                x.Icon,
-                x.Timestamp,
-                IsSender = x.SenderId == userId
-            });
+                throw new Exception("User ID claim is missing or invalid.");
+            }
+
+            var chatMessages = _unitOfWork.ChatMessage.GetAll(x => x.RoomId == roomId).OrderByDescending(x => x.Timestamp)
+                .Skip(page * 10)
+                .Take(10)
+                .Select(x => new { x.MessageId, x.RoomId, x.SenderId, x.Content, x.Media, x.Icon,x.Timestamp, IsSender = x.SenderId == userId }).ToList();
+
             return Ok(chatMessages);
         }
 

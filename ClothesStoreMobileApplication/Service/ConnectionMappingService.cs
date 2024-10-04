@@ -33,6 +33,7 @@ namespace ClothesStoreMobileApplication.Service
 
         public string GetUserId(string connectionId)
         {
+            var x = _userConnections;
             return _userConnections.FirstOrDefault(x => x.Value.Contains(connectionId)).Key;
         }
 

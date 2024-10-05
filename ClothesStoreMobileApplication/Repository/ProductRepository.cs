@@ -99,6 +99,7 @@ namespace ClothesStoreMobileApplication.Repository
                 Avt = x.Seller.Avt,
                 CompanyName = x.Seller.CompanyName,
                 Address = x.Seller.Address,
+                UserId = x.Seller.UserId
             }
         })
         .FirstOrDefault();

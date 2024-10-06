@@ -48,7 +48,7 @@ namespace ClothesStoreMobileApplication.Controllers
             });
         }
         [HttpGet]
-        public IActionResult Get(string orderBy = "Default", int pageNumber = 1, int pageSize = 10, int? categoryId = null, int? sellerId = null, string? name = null, long? priceFrom = null, long? priceTo = null, List<int> listOptionId = null, List<int> listCategoryId = null)
+        public IActionResult Get(string orderBy = "Default", int pageNumber = 1, int pageSize = 10, int? categoryId = null, int? sellerId = null, string? name = null, long? priceFrom = null, long? priceTo = null, [FromQuery] List<int> listOptionId = null, [FromQuery] List<int> listCategoryId = null)
         {
             IEnumerable<Product> products;
 

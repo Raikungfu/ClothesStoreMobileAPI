@@ -52,7 +52,15 @@ namespace ClothesStoreMobileApplication.Controllers
         {
             IEnumerable<Product> products;
 
-            products = _unitOfWork.Product.GetAll(null, null, "Reviews");
+            if (listOptionId != null && listOptionId.Count() > 0)
+            {
+                products = _unitOfWork.Product.GetAll(null, null, "Reviews,Options").Where(p => p.Options.Any(o => listOptionId.Contains(o.OptionId)));
+            }
+            else
+            {
+                products = _unitOfWork.Product.GetAll(null, null, "Reviews");
+            }
+
 
             if (categoryId.HasValue)
             {
@@ -77,11 +85,6 @@ namespace ClothesStoreMobileApplication.Controllers
             if (priceTo != null)
             {
                 products = products.Where(p => p.NewPrice <= priceTo);
-            }
-
-            if (listOptionId != null && listOptionId.Count() > 0)
-            {
-                products = products.Where(p => p.Options.Any(o => listOptionId.Contains(o.OptionId)));
             }
 
             if (listCategoryId != null && listCategoryId.Count() > 0)

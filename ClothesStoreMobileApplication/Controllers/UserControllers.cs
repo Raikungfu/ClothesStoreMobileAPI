@@ -114,7 +114,7 @@ namespace ClothesStoreMobileApplication.Controllers
                 issuer: "RaiYugi",
                 audience: "Saint",
                 claims: claims,
-                expires: DateTime.Now.AddHours(3),
+                expires: DateTime.Now.AddDays(30),
                 signingCredentials: creds
             );
 

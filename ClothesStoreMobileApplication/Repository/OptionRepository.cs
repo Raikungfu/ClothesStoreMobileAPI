@@ -18,7 +18,6 @@ namespace ClothesStoreMobileApplication.Repository
             var objFromDb = _db.Options.FirstOrDefault(s => s.OptionId == option.OptionId);
             if (objFromDb != null)
             {
-                objFromDb.Name = option.Name;
                 objFromDb.Price = option.Price;
                 objFromDb.ProductId = option.ProductId;
                 objFromDb.OptionGroupId = option.OptionGroupId;

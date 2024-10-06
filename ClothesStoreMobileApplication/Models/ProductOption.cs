@@ -13,6 +13,10 @@ namespace ClothesStoreMobileApplication.Models
         [MaxLength(100)]
         public string Name { get; set; }
 
+        [Required]
+        [MaxLength(100)]
+        public string NameDescription { get; set; }
+
 
         public virtual ICollection<Option> Options { get; set; }
     }

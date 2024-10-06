@@ -90,7 +90,7 @@ namespace ClothesStoreMobileApplication.Repository
             Options = x.Options.Select(o => new OptionModel
             {
                 OptionId = o.OptionId,
-                Name = o.Name,
+                Name = o.ProductOptions.NameDescription,
                 ProductOption = o.ProductOptions.Name,
                 Price = o.Price
             }).ToList(),

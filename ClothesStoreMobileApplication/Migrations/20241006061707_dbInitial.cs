@@ -52,7 +52,8 @@ namespace ClothesStoreMobileApplication.Migrations
                 {
                     ProductOptionsId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    NameDescription = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -318,7 +319,6 @@ namespace ClothesStoreMobileApplication.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     OptionGroupId = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: true)
                 },
                 constraints: table =>
@@ -448,11 +448,13 @@ namespace ClothesStoreMobileApplication.Migrations
 
             migrationBuilder.InsertData(
                 table: "ProductOptions",
-                columns: new[] { "ProductOptionsId", "Name" },
+                columns: new[] { "ProductOptionsId", "Name", "NameDescription" },
                 values: new object[,]
                 {
-                    { 1, "Size" },
-                    { 2, "Color" }
+                    { 1, "Size", "Small" },
+                    { 2, "Size", "Medium" },
+                    { 3, "Color", "Blue" },
+                    { 4, "Color", "Red" }
                 });
 
             migrationBuilder.InsertData(
@@ -500,9 +502,9 @@ namespace ClothesStoreMobileApplication.Migrations
                 columns: new[] { "MessageId", "Content", "Icon", "Media", "RoomId", "SenderId", "Timestamp" },
                 values: new object[,]
                 {
-                    { 1, "Hello, I have a question about my order.", null, null, 1, 3, new DateTime(2024, 10, 1, 14, 40, 56, 982, DateTimeKind.Local).AddTicks(2456) },
-                    { 2, "Sure, how can I assist you?", null, null, 1, 2, new DateTime(2024, 10, 1, 14, 40, 56, 982, DateTimeKind.Local).AddTicks(2458) },
-                    { 3, "Is there anything specific you need help with?", null, null, 1, 2, new DateTime(2024, 10, 1, 14, 40, 56, 982, DateTimeKind.Local).AddTicks(2459) }
+                    { 1, "Hello, I have a question about my order.", null, null, 1, 3, new DateTime(2024, 10, 6, 13, 17, 7, 347, DateTimeKind.Local).AddTicks(4985) },
+                    { 2, "Sure, how can I assist you?", null, null, 1, 2, new DateTime(2024, 10, 6, 13, 17, 7, 347, DateTimeKind.Local).AddTicks(4987) },
+                    { 3, "Is there anything specific you need help with?", null, null, 1, 2, new DateTime(2024, 10, 6, 13, 17, 7, 347, DateTimeKind.Local).AddTicks(4989) }
                 });
 
             migrationBuilder.InsertData(
@@ -510,8 +512,8 @@ namespace ClothesStoreMobileApplication.Migrations
                 columns: new[] { "OrderId", "CustomerId", "DiscountCode", "OrderDate", "PaymentMethod", "ShipAddress", "ShipFee", "ShipMail", "ShipName", "ShipPhone", "Status", "TotalAmount" },
                 values: new object[,]
                 {
-                    { 1, 1, "SUMMER20", new DateTime(2024, 10, 1, 14, 40, 56, 982, DateTimeKind.Local).AddTicks(2320), "credit_card", "123 Main St, Cityville", 5, "john@example.com", "John Doe", "123-456-7890", "pending", 100.0 },
-                    { 2, 1, null, new DateTime(2024, 10, 1, 14, 40, 56, 982, DateTimeKind.Local).AddTicks(2324), "paypal", "456 Elm St, Townsville", 0, "jane@example.com", "Jane Smith", "098-765-4321", "completed", 150.0 }
+                    { 1, 1, "SUMMER20", new DateTime(2024, 10, 6, 13, 17, 7, 347, DateTimeKind.Local).AddTicks(4804), "credit_card", "123 Main St, Cityville", 5, "john@example.com", "John Doe", "123-456-7890", "pending", 100.0 },
+                    { 2, 1, null, new DateTime(2024, 10, 6, 13, 17, 7, 347, DateTimeKind.Local).AddTicks(4808), "paypal", "456 Elm St, Townsville", 0, "jane@example.com", "Jane Smith", "098-765-4321", "completed", 150.0 }
                 });
 
             migrationBuilder.InsertData(
@@ -558,13 +560,13 @@ namespace ClothesStoreMobileApplication.Migrations
 
             migrationBuilder.InsertData(
                 table: "Options",
-                columns: new[] { "OptionId", "Name", "OptionGroupId", "Price", "ProductId" },
+                columns: new[] { "OptionId", "OptionGroupId", "Price", "ProductId" },
                 values: new object[,]
                 {
-                    { 1, "Small", 1, 0m, 1 },
-                    { 2, "Medium", 1, 0m, 1 },
-                    { 3, "Red", 2, 0m, 1 },
-                    { 4, "Blue", 2, 0m, 1 }
+                    { 1, 1, 0m, 1 },
+                    { 2, 2, 0m, 2 },
+                    { 3, 3, 0m, 3 },
+                    { 4, 4, 0m, 4 }
                 });
 
             migrationBuilder.InsertData(
@@ -591,8 +593,8 @@ namespace ClothesStoreMobileApplication.Migrations
                 columns: new[] { "ReplyId", "Content", "ReplyDate", "ReviewId", "UserId" },
                 values: new object[,]
                 {
-                    { 1, "Thank you for your feedback!", new DateTime(2024, 10, 1, 14, 40, 56, 982, DateTimeKind.Local).AddTicks(2409), 1, 1 },
-                    { 2, "We appreciate your input!", new DateTime(2024, 10, 1, 14, 40, 56, 982, DateTimeKind.Local).AddTicks(2411), 2, 2 }
+                    { 1, "Thank you for your feedback!", new DateTime(2024, 10, 6, 13, 17, 7, 347, DateTimeKind.Local).AddTicks(4917), 1, 1 },
+                    { 2, "We appreciate your input!", new DateTime(2024, 10, 6, 13, 17, 7, 347, DateTimeKind.Local).AddTicks(4919), 2, 2 }
                 });
 
             migrationBuilder.CreateIndex(

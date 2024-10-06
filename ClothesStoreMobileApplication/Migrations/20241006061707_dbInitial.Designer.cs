@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClothesStoreMobileApplication.Migrations
 {
     [DbContext(typeof(ClothesStoreContext))]
-    [Migration("20241001074057_dbInitial")]
+    [Migration("20241006061707_dbInitial")]
     partial class dbInitial
     {
         /// <inheritdoc />
@@ -237,7 +237,7 @@ namespace ClothesStoreMobileApplication.Migrations
                             Content = "Hello, I have a question about my order.",
                             RoomId = 1,
                             SenderId = 3,
-                            Timestamp = new DateTime(2024, 10, 1, 14, 40, 56, 982, DateTimeKind.Local).AddTicks(2456)
+                            Timestamp = new DateTime(2024, 10, 6, 13, 17, 7, 347, DateTimeKind.Local).AddTicks(4985)
                         },
                         new
                         {
@@ -245,7 +245,7 @@ namespace ClothesStoreMobileApplication.Migrations
                             Content = "Sure, how can I assist you?",
                             RoomId = 1,
                             SenderId = 2,
-                            Timestamp = new DateTime(2024, 10, 1, 14, 40, 56, 982, DateTimeKind.Local).AddTicks(2458)
+                            Timestamp = new DateTime(2024, 10, 6, 13, 17, 7, 347, DateTimeKind.Local).AddTicks(4987)
                         },
                         new
                         {
@@ -253,7 +253,7 @@ namespace ClothesStoreMobileApplication.Migrations
                             Content = "Is there anything specific you need help with?",
                             RoomId = 1,
                             SenderId = 2,
-                            Timestamp = new DateTime(2024, 10, 1, 14, 40, 56, 982, DateTimeKind.Local).AddTicks(2459)
+                            Timestamp = new DateTime(2024, 10, 6, 13, 17, 7, 347, DateTimeKind.Local).AddTicks(4989)
                         });
                 });
 
@@ -364,11 +364,6 @@ namespace ClothesStoreMobileApplication.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OptionId"));
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.Property<int>("OptionGroupId")
                         .HasColumnType("int");
 
@@ -390,7 +385,6 @@ namespace ClothesStoreMobileApplication.Migrations
                         new
                         {
                             OptionId = 1,
-                            Name = "Small",
                             OptionGroupId = 1,
                             Price = 0m,
                             ProductId = 1
@@ -398,26 +392,23 @@ namespace ClothesStoreMobileApplication.Migrations
                         new
                         {
                             OptionId = 2,
-                            Name = "Medium",
-                            OptionGroupId = 1,
+                            OptionGroupId = 2,
                             Price = 0m,
-                            ProductId = 1
+                            ProductId = 2
                         },
                         new
                         {
                             OptionId = 3,
-                            Name = "Red",
-                            OptionGroupId = 2,
+                            OptionGroupId = 3,
                             Price = 0m,
-                            ProductId = 1
+                            ProductId = 3
                         },
                         new
                         {
                             OptionId = 4,
-                            Name = "Blue",
-                            OptionGroupId = 2,
+                            OptionGroupId = 4,
                             Price = 0m,
-                            ProductId = 1
+                            ProductId = 4
                         });
                 });
 
@@ -480,7 +471,7 @@ namespace ClothesStoreMobileApplication.Migrations
                             OrderId = 1,
                             CustomerId = 1,
                             DiscountCode = "SUMMER20",
-                            OrderDate = new DateTime(2024, 10, 1, 14, 40, 56, 982, DateTimeKind.Local).AddTicks(2320),
+                            OrderDate = new DateTime(2024, 10, 6, 13, 17, 7, 347, DateTimeKind.Local).AddTicks(4804),
                             PaymentMethod = "credit_card",
                             ShipAddress = "123 Main St, Cityville",
                             ShipFee = 5,
@@ -494,7 +485,7 @@ namespace ClothesStoreMobileApplication.Migrations
                         {
                             OrderId = 2,
                             CustomerId = 1,
-                            OrderDate = new DateTime(2024, 10, 1, 14, 40, 56, 982, DateTimeKind.Local).AddTicks(2324),
+                            OrderDate = new DateTime(2024, 10, 6, 13, 17, 7, 347, DateTimeKind.Local).AddTicks(4808),
                             PaymentMethod = "paypal",
                             ShipAddress = "456 Elm St, Townsville",
                             ShipFee = 0,
@@ -1016,6 +1007,11 @@ namespace ClothesStoreMobileApplication.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("NameDescription")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.HasKey("ProductOptionsId");
 
                     b.ToTable("ProductOptions");
@@ -1024,12 +1020,26 @@ namespace ClothesStoreMobileApplication.Migrations
                         new
                         {
                             ProductOptionsId = 1,
-                            Name = "Size"
+                            Name = "Size",
+                            NameDescription = "Small"
                         },
                         new
                         {
                             ProductOptionsId = 2,
-                            Name = "Color"
+                            Name = "Size",
+                            NameDescription = "Medium"
+                        },
+                        new
+                        {
+                            ProductOptionsId = 3,
+                            Name = "Color",
+                            NameDescription = "Blue"
+                        },
+                        new
+                        {
+                            ProductOptionsId = 4,
+                            Name = "Color",
+                            NameDescription = "Red"
                         });
                 });
 
@@ -1067,7 +1077,7 @@ namespace ClothesStoreMobileApplication.Migrations
                         {
                             ReplyId = 1,
                             Content = "Thank you for your feedback!",
-                            ReplyDate = new DateTime(2024, 10, 1, 14, 40, 56, 982, DateTimeKind.Local).AddTicks(2409),
+                            ReplyDate = new DateTime(2024, 10, 6, 13, 17, 7, 347, DateTimeKind.Local).AddTicks(4917),
                             ReviewId = 1,
                             UserId = 1
                         },
@@ -1075,7 +1085,7 @@ namespace ClothesStoreMobileApplication.Migrations
                         {
                             ReplyId = 2,
                             Content = "We appreciate your input!",
-                            ReplyDate = new DateTime(2024, 10, 1, 14, 40, 56, 982, DateTimeKind.Local).AddTicks(2411),
+                            ReplyDate = new DateTime(2024, 10, 6, 13, 17, 7, 347, DateTimeKind.Local).AddTicks(4919),
                             ReviewId = 2,
                             UserId = 2
                         });

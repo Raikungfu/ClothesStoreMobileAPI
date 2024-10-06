@@ -35,17 +35,5 @@ namespace ClothesStoreMobileApplication.Controllers
             }
             return Ok(obj);
         }
-
-        [HttpGet("{name}")]
-        public IActionResult Get(string name)
-        {
-            var obj = _unitOfWork.Option.GetFirstOrDefault(u => u.Name == name);
-            if (obj == null)
-            {
-                return NotFound();
-            }
-            return Ok(obj);
-        }
-
     }
 }

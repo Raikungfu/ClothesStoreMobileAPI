@@ -155,14 +155,22 @@ namespace ClothesStoreMobileApplication.Models
                 new Category { CategoryId = 4, Name = "Shoes", Img = "https://plus.unsplash.com/premium_photo-1682435561654-20d84cef00eb?q=80&w=1918&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" }
             );
 
-            // Seed data for Option
-            modelBuilder.Entity<Option>().HasData(
-                new Option { OptionId = 1, OptionGroupId = 1, ProductId = 1, Name = "Small", Price = 0 },
-               new Option { OptionId = 2, OptionGroupId = 1, ProductId = 1, Name = "Medium", Price = 0 },
-               new Option { OptionId = 3, OptionGroupId = 2, ProductId = 1, Name = "Red", Price = 0 },
-               new Option { OptionId = 4, OptionGroupId = 2, ProductId = 1, Name = "Blue", Price = 0 }
+
+            // Seed data for ProductOption
+            modelBuilder.Entity<ProductOption>().HasData(
+                new ProductOption { ProductOptionsId = 1, Name = "Size", NameDescription = "Small" },
+                new ProductOption { ProductOptionsId = 2, Name = "Size", NameDescription = "Medium" },
+                new ProductOption { ProductOptionsId = 3, Name = "Color", NameDescription = "Blue" },
+                new ProductOption { ProductOptionsId = 4, Name = "Color", NameDescription = "Red" }
             );
 
+            // Seed data for Option
+            modelBuilder.Entity<Option>().HasData(
+                new Option { OptionId = 1, OptionGroupId = 1, ProductId = 1, Price = 0 },
+               new Option { OptionId = 2, OptionGroupId = 2, ProductId = 2, Price = 0 },
+               new Option { OptionId = 3, OptionGroupId = 3, ProductId = 3, Price = 0 },
+               new Option { OptionId = 4, OptionGroupId = 4, ProductId = 4, Price = 0 }
+            );
 
             // Seed data for 10 Products in Category 1 (T-Shirts)
             modelBuilder.Entity<Product>().HasData(
@@ -209,13 +217,6 @@ namespace ClothesStoreMobileApplication.Models
                 new Product { ProductId = 34, Name = "Shoe 4", Img = "https://images.unsplash.com/photo-1561909848-977d0617f275?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", Quantity = 100, Description = "Description for Shoe 4", NewPrice = 48, OldPrice = 58, QuantitySold = 0, CategoryId = 4, SellerId = 1 },
                 new Product { ProductId = 35, Name = "Shoe 5", Img = "https://plus.unsplash.com/premium_photo-1682125177822-63c27a3830ea?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", Quantity = 100, Description = "Description for Shoe 5", NewPrice = 50, OldPrice = 60, QuantitySold = 0, CategoryId = 4, SellerId = 1 }
             );
-
-            // Seed data for ProductOption
-            modelBuilder.Entity<ProductOption>().HasData(
-                new ProductOption { ProductOptionsId = 1, Name = "Size" },
-                new ProductOption { ProductOptionsId = 2, Name = "Color" }
-            );
-
 
             // Seed data for Discount
             modelBuilder.Entity<Discount>().HasData(

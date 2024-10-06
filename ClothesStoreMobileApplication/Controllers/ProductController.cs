@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
+using System.Linq;
 
 namespace ClothesStoreMobileApplication.Controllers
 {
@@ -24,8 +25,30 @@ namespace ClothesStoreMobileApplication.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet("GetListCategoryAndProductOptions")]
+        public IActionResult GetListCategoryAndProductOptions()
+        {
+            var productOptionsList = _unitOfWork.ProductOption.GetAll().Select(o => new
+            {
+                o.ProductOptionsId,
+                o.Name,
+                o.NameDescription,
+            });
+
+            var categoryList = _unitOfWork.Category.GetAll().Select(o => new
+            {
+                o.CategoryId,
+                o.Name,
+            });
+
+            return Ok(new
+            {
+                categoryList,
+                productOptionsList
+            });
+        }
         [HttpGet]
-        public IActionResult Get(string orderBy = "Default", int pageNumber = 1, int pageSize = 10, int? categoryId = null, int? sellerId = null)
+        public IActionResult Get(string orderBy = "Default", int pageNumber = 1, int pageSize = 10, int? categoryId = null, int? sellerId = null, string? name = null, long? priceFrom = null, long? priceTo = null, List<int> listOptionId = null, List<int> listCategoryId = null)
         {
             IEnumerable<Product> products;
 
@@ -39,6 +62,31 @@ namespace ClothesStoreMobileApplication.Controllers
             if (sellerId.HasValue)
             {
                 products = products.Where(p => p.SellerId == sellerId.Value);
+            }
+
+            if (!String.IsNullOrEmpty(name))
+            {
+                products = products.Where(p => p.Name.Contains(name));
+            }
+
+            if (priceFrom != null)
+            {
+                products = products.Where(p => p.NewPrice >= priceFrom);
+            }
+
+            if (priceTo != null)
+            {
+                products = products.Where(p => p.NewPrice <= priceTo);
+            }
+
+            if (listOptionId != null && listOptionId.Count() > 0)
+            {
+                products = products.Where(p => p.Options.Any(o => listOptionId.Contains(o.OptionId)));
+            }
+
+            if (listCategoryId != null && listCategoryId.Count() > 0)
+            {
+                products = products.Where(p => p.CategoryId.HasValue && listCategoryId.Contains(p.CategoryId.Value));
             }
 
             switch (orderBy)

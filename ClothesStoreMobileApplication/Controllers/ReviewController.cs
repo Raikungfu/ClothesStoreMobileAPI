@@ -50,9 +50,19 @@ namespace ClothesStoreMobileApplication.Controllers
 
         [AllowAnonymous]
         [HttpGet("GetReviewsForProduct/{productId}")]
-        public IActionResult GetReviewsForProduct(int productId)
+        public IActionResult GetReviewsForProduct(int productId, int page = 0)
         {
-            var objList = _unitOfWork.Review.GetAll(u => u.ProductId == productId);
+            var objList = _unitOfWork.Review.GetAll(u => u.ProductId == productId).Skip(page * 2).Take(2).OrderByDescending(r => r.ReviewId).Select(r => new
+            {
+                ReviewId = r.ReviewId,
+                CustomerId = r.CustomerId,
+                ProductId = r.ProductId,
+                OrderId = r.OrderId,
+                Rating = r.Rating,
+                Comment = r.Comment,
+                Customer = _unitOfWork.Customer.GetFirstOrDefault(c => c.CustomerId == r.CustomerId)
+            });
+
             if (objList == null)
             {
                 return NotFound();

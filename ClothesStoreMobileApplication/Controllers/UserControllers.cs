@@ -127,5 +127,33 @@ namespace ClothesStoreMobileApplication.Controllers
             var users = await _context.Users.Where(u => u.UserType == type).ToListAsync();
             return Ok(users);
         }
+
+        [HttpGet("Customer/{userId}")]
+        public async Task<IActionResult> GetCustomerByUserId(int userId)
+        {
+            var customer = await _context.Customers.FirstOrDefaultAsync(u => u.UserId == userId);
+
+            if (customer == null)
+                return NotFound();
+
+            return Ok(customer);
+        }
+
+        [HttpPost("Customer/{userId}")]
+        public async Task<IActionResult> UpdateCustomer(int userId, CustomerUpdateViewModel customer)
+        {
+            var customerInDb = await _context.Customers.FirstOrDefaultAsync(u => u.UserId == userId);
+
+            if (customerInDb == null)
+                return NotFound();
+
+            customerInDb.Address = customer.Address;
+            customerInDb.Name = customer.Name;
+            customerInDb.Avt = customer.Avt;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { Message = "Update successful!" });
+        }
     }
 }

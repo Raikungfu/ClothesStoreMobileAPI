@@ -154,6 +154,9 @@ namespace ClothesStoreMobileApplication.Controllers
                              Avatar = u.UserType == UserType.Seller ? seller.Avt
                                     : u.UserType == UserType.Customer ? customer.Avt
                                     : admin.Avt,
+                            Cover = u.UserType == UserType.Admin ? admin.Cover 
+                            : u.UserType == UserType.Seller ? seller.Cover 
+                            : null,
                             u.Email,
                             u.Phone,
                             u.UserType

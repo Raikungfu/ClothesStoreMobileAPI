@@ -7,6 +7,7 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using ClothesStoreMobileApplication.ViewModels.User;
 using Microsoft.AspNetCore.Authorization;
+using System.ComponentModel.DataAnnotations;
 
 namespace ClothesStoreMobileApplication.Controllers
 {
@@ -128,15 +129,106 @@ namespace ClothesStoreMobileApplication.Controllers
             return Ok(users);
         }
 
-        [HttpGet("Customer/{userId}")]
-        public async Task<IActionResult> GetCustomerByUserId(int userId)
+        [HttpGet("GetUserNameAndAvt")]
+        public async Task<IActionResult> GetUserNameAndAvt()
         {
-            var customer = await _context.Customers.FirstOrDefaultAsync(u => u.UserId == userId);
+            var claimValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(claimValue) || !int.TryParse(claimValue, out int userId))
+            {
+                return Unauthorized("User not logged in. Please log in to continue.");
+            }
 
-            if (customer == null)
+            var user = (from u in _context.Users
+                         where u.UserId == userId
+                         join s in _context.Sellers on u.UserId equals s.UserId into sellerGroup
+                         from seller in sellerGroup.DefaultIfEmpty()
+                         join c in _context.Customers on u.UserId equals c.UserId into customerGroup
+                         from customer in customerGroup.DefaultIfEmpty()
+                         join a in _context.Admins on u.UserId equals a.UserId into adminGroup
+                         from admin in adminGroup.DefaultIfEmpty()
+                         select new
+                         {
+                             Name = u.UserType == UserType.Seller ? seller.CompanyName
+                                  : u.UserType == UserType.Customer ? customer.Name
+                                  : u.Username,
+                             Avatar = u.UserType == UserType.Seller ? seller.Avt
+                                    : u.UserType == UserType.Customer ? customer.Avt
+                                    : admin.Avt,
+                            u.Email,
+                            u.Phone,
+                            u.UserType
+                         }).FirstOrDefault();
+            if (user == null)
+            {
                 return NotFound();
+            }
+            return Ok(user);
+        }
 
-            return Ok(customer);
+        [HttpGet("GetProfile")]
+        public async Task<IActionResult> GetProfile()
+        {
+            var claimValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(claimValue) || !int.TryParse(claimValue, out int userId))
+            {
+                return Unauthorized("User not logged in. Please log in to continue.");
+            }
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            switch (user.UserType)
+            {
+                case UserType.Admin:
+                    var admin = await _context.Admins.Select(p => new
+                    {
+                        p.AdminId,
+                        p.UserId,
+                        p.Avt,
+                        p.Cover
+                    }).FirstOrDefaultAsync(u => u.UserId == userId);
+                    return Ok(new
+                    {
+                        User = user,
+                        Admin = admin
+                    });
+                case UserType.Seller:
+                    var seller = await _context.Sellers.Select(p => new
+                    {
+                        p.SellerId,
+                        p.CompanyName,
+                        p.Address,
+                        p.Description,
+                        p.UserId,
+                        p.Avt,
+                        p.Cover,
+                    }).FirstOrDefaultAsync(u => u.UserId == userId);
+                    return Ok(new
+                    {
+                        User = user,
+                        Seller = seller
+                    });
+                case UserType.Customer:
+                    var customer = await _context.Customers.Select(p => new
+                    {
+                        p.UserId,
+                        p.CustomerId,
+                        p.Name,
+                        p.Address,
+                        p.Avt,
+                    }).FirstOrDefaultAsync(u => u.UserId == userId);
+                    return Ok(new
+                    {
+                        User = user,
+                        Customer = customer
+                    });
+                default:
+                    return BadRequest(new { Message = "Role of user not correct!" });
+            }
         }
 
         [HttpPost("Customer/{userId}")]

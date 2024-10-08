@@ -49,38 +49,18 @@ namespace ClothesStoreMobileApplication.Controllers
             return Ok(obj);
         }
 
-        // [HttpGet("GetOrderItem/{userId:int}", Name = "GetOrderByUserId")]
-        // public IActionResult GetOrderItem(int userId)
-        // {
-        //     var obj = _unitOfWork.Order.GetAll(u => u.Customer.User.UserId == userId);
-        //     if (obj == null)
-        //     {
-        //         return NotFound();
-        //     }
-        //     return Ok(obj);
-        // }
+        [HttpGet("GetOrderItem/{userId:int}", Name = "GetOrderByUserId")]
+        public IActionResult GetOrderItem(int userId)
+        {
+            var obj = _unitOfWork.Order.GetAll(u => u.Customer.User.UserId == userId);
+            if (obj == null)
+            {
+                return NotFound();
+            }
+            return Ok(obj);
+        }
 
         
-[HttpGet("GetOrderItem", Name = "GetOrderByUserId")]
-
-public IActionResult GetOrderItem()
-{
-    var claimValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-    if (string.IsNullOrEmpty(claimValue) || !int.TryParse(claimValue, out int userId))
-    {
-        return Unauthorized("User not logged in. Please log in to continue.");
-    }
-
-
-    var orderItems = _unitOfWork.Order.GetAll(u => u.Customer.User.UserId == userId);
-    
-    if (orderItems == null || !orderItems.Any())
-    {
-        return NotFound("No order items found for this user.");
-    }
-
-    return Ok(orderItems);
-}
 
 
         [HttpPost]

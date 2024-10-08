@@ -4,7 +4,7 @@ using ClothesStoreMobileApplication.Repository.IRepository;
 using ClothesStoreMobileApplication.ViewModels.Order;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace ClothesStoreMobileApplication.Controllers
 {
@@ -49,16 +49,39 @@ namespace ClothesStoreMobileApplication.Controllers
             return Ok(obj);
         }
 
-        [HttpGet("GetOrderItem/{userId:int}", Name = "GetOrderByUserId")]
-        public IActionResult GetOrderItem(int userId)
-        {
-            var obj = _unitOfWork.Order.GetAll(u => u.Customer.User.UserId == userId);
-            if (obj == null)
-            {
-                return NotFound();
-            }
-            return Ok(obj);
-        }
+        // [HttpGet("GetOrderItem/{userId:int}", Name = "GetOrderByUserId")]
+        // public IActionResult GetOrderItem(int userId)
+        // {
+        //     var obj = _unitOfWork.Order.GetAll(u => u.Customer.User.UserId == userId);
+        //     if (obj == null)
+        //     {
+        //         return NotFound();
+        //     }
+        //     return Ok(obj);
+        // }
+
+
+   
+   [HttpGet("GetOrderItem", Name = "GetOrderByUserId")]
+
+   public IActionResult GetOrderItem()
+   {
+       var claimValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+       if (string.IsNullOrEmpty(claimValue) || !int.TryParse(claimValue, out int userId))
+       {
+           return Unauthorized("User not logged in. Please log in to continue.");
+       }
+
+
+       var order = _unitOfWork.Order.GetAll(u => u.Customer.User.UserId == userId);
+    
+       if (order == null || !order.Any())
+       {
+           return NotFound("No order found for this user.");
+       }
+
+       return Ok(order);
+    }
 
         
 

@@ -2,8 +2,11 @@
 using ClothesStoreMobileApplication.Models;
 using ClothesStoreMobileApplication.Repository.IRepository;
 using ClothesStoreMobileApplication.ViewModels.CartItem;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+
 
 namespace ClothesStoreMobileApplication.Controllers
 {
@@ -87,6 +90,62 @@ namespace ClothesStoreMobileApplication.Controllers
             _unitOfWork.Save();
             return Ok(obj);
         }
+
+
+     [Authorize]
+     [HttpGet("GetCartItemsOfCart", Name = "GetCartItemsOfCart")]
+     public IActionResult GetCartItemsOfCart()
+     {
+         var claimValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+         if (string.IsNullOrEmpty(claimValue) || !int.TryParse(claimValue, out int userId))
+         {
+             return Unauthorized("User not logged in. Please log in to continue.");
+         }
+
+         var customer = _unitOfWork.Customer.GetFirstOrDefault(c => c.UserId == userId);
+         if (customer == null)
+         {
+             return NotFound("Customer not found.");
+         }
+         var cart = _unitOfWork.Cart.GetFirstOrDefault(c => c.CustomerId == customer.CustomerId);
+         if (cart == null)
+         {
+             return NotFound("No active cart found for this customer.");
+         }
+
+
+         var cartItems = _unitOfWork.CartItem.GetAll(ci => ci.CartId == cart.CartId);
+         if (cartItems == null || !cartItems.Any())
+         {
+             return NotFound("No cart items found for this cart.");
+         }
+
+         var result = cartItems.Select(cartItem => new
+         {
+             cartItem.CartItemId,
+             cartItem.Quantity,
+             cartItem.CartId,
+             Product = _unitOfWork.Product.GetFirstOrDefault(p => p.ProductId == cartItem.ProductId)
+         })
+         .Select(item => new
+         {
+             item.CartItemId,
+             item.Quantity,
+             item.CartId,
+             Product = item.Product != null ? new
+             {
+                 item.Product.ProductId,
+                 item.Product.Name,
+                 item.Product.Img,
+                 item.Product.NewPrice,
+                 item.Product.OldPrice,
+                 item.Product.Description,
+                 item.Product.QuantitySold
+             } : null
+         }).ToList();
+
+         return Ok(result);
+     }
 
 
         [HttpDelete("{id:int}")]

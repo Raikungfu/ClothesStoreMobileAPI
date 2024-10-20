@@ -93,7 +93,7 @@ namespace ClothesStoreMobileApplication.Controllers
 
 
       [Authorize]
-      [HttpPost]
+      [HttpPost("CreateCartItem", Name = "CreateCartItem")]
       public IActionResult CreateCartItem([FromBody] CartItemCreateViewModel obj)
       {
           if (!ModelState.IsValid)

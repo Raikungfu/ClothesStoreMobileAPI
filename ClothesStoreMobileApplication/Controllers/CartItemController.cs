@@ -92,6 +92,63 @@ namespace ClothesStoreMobileApplication.Controllers
         }
 
 
+      [Authorize]
+      [HttpPost("CreateCartItem", Name = "CreateCartItem")]
+      public IActionResult CreateCartItem([FromBody] CartItemCreateViewModel obj)
+      {
+          if (!ModelState.IsValid)
+          {
+              return BadRequest(ModelState);
+          }
+
+          var claimValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+          if (string.IsNullOrEmpty(claimValue) || !int.TryParse(claimValue, out int userId))
+          {
+              return Unauthorized("User not logged in. Please log in to continue.");
+          }
+
+          var customer = _unitOfWork.Customer.GetFirstOrDefault(c => c.UserId == userId);
+          if (customer == null)
+          {
+              return NotFound("Customer not found.");
+          }
+
+          var cart = _unitOfWork.Cart.GetFirstOrDefault(c => c.CustomerId == customer.CustomerId);
+          if (cart == null)
+          {
+              return NotFound("No active cart found for this customer.");
+          }
+
+          var product = _unitOfWork.Product.GetFirstOrDefault(u => u.ProductId == obj.ProductId);
+        
+          if (obj.Quantity > product.Quantity)
+          {
+              ModelState.AddModelError("", "Quantity exceeds available stock.");
+              return BadRequest(ModelState);
+          }
+
+          var existingCartItem = _unitOfWork.CartItem.GetFirstOrDefault(ci => ci.CartId == cart.CartId && ci.ProductId == obj.ProductId);
+          if (existingCartItem != null)
+          {
+              existingCartItem.Quantity += obj.Quantity;
+              if (existingCartItem.Quantity > product.Quantity)
+              {
+                  ModelState.AddModelError("", "Updated quantity exceeds available stock.");
+                  return BadRequest(ModelState);
+              }
+
+              _unitOfWork.Save();
+              return Ok(existingCartItem);
+          }
+
+          var cartItem = _mapper.Map<CartItem>(obj);
+          cartItem.CartId = cart.CartId;
+          _unitOfWork.CartItem.Add(cartItem);
+          _unitOfWork.Save();
+
+          return Ok(cartItem);
+      }
+
      [Authorize]
      [HttpGet("GetCartItemsOfCart", Name = "GetCartItemsOfCart")]
      public IActionResult GetCartItemsOfCart()

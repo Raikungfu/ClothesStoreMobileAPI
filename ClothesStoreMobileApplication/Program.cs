@@ -28,6 +28,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<BraintreeService>();
 
 
 var environment = builder.Environment.EnvironmentName;

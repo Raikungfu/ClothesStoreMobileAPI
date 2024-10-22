@@ -73,7 +73,7 @@ namespace ClothesStoreMobileApplication.Models
                     Username = "seller1",
                     Password = "seller1password", // Nên mã hóa mật khẩu
                     Email = "seller1@example.com",
-                    Phone = "0987654321",
+                    Phone = "0981961993",
                     Status = true,
                     UserType = UserType.Seller
                 },
@@ -93,7 +93,7 @@ namespace ClothesStoreMobileApplication.Models
                     Username = "seller2",
                     Password = "seller2password", // Nên mã hóa mật khẩu
                     Email = "seller2@example.com",
-                    Phone = "0987123456",
+                    Phone = "0931335263",
                     Status = true,
                     UserType = UserType.Seller
                 }
@@ -118,20 +118,24 @@ namespace ClothesStoreMobileApplication.Models
                     SellerId = 1,
                     Avt = "https://i.imgur.com/thZDKR1.png",
                     Cover = "https://i.imgur.com/nIBeNMD.jpeg",
-                    CompanyName = "Fashion World",
-                    Address = "123 Fashion Street, City X",
-                    Description = "A well-known fashion retailer offering high-quality garments.",
-                    UserId = 2 // Tham chiếu tới người dùng có UserId = 2
+                    CompanyName = "Tây Fashion Shop 1",
+                    Address = "368 Nguyễn Thái Học, Ngô Mây, Thành phố, Bình Định, Vietnam",
+                    Description = "Man Fashion \nA well-known fashion retailer offering high-quality garments.",
+                    UserId = 2,
+                    Latitude = 13.765308955609873,
+                    Longitude = 109.21480116679632
                 },
                 new Seller
                 {
                     SellerId = 2,
                     Avt = "https://i.imgur.com/7ZIv1jz.png",
                     Cover = "https://i.imgur.com/7ZIv1jz.png",
-                    CompanyName = "Shoe Haven",
-                    Address = "456 Shoe Street, City Y",
+                    CompanyName = "Saigon Jane T-shirt Shop",
+                    Address = "185-12 Phạm Ngũ Lão, Phường Phạm Ngũ Lão, Quận 1, Hồ Chí Minh 700000, Vietnam",
                     Description = "A leading shoe retailer offering a wide range of footwear.",
-                    UserId = 4 // Tham chiếu tới người dùng có UserId = 2
+                    UserId = 4,
+                    Latitude = 10.771346809594261,
+                    Longitude = 106.6925437473553
                 }
             );
 

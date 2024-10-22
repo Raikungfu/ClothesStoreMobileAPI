@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClothesStoreMobileApplication.Migrations
 {
     [DbContext(typeof(ClothesStoreContext))]
-    [Migration("20241017005641_update-data")]
-    partial class updatedata
+    [Migration("20241022033534_dbInitial")]
+    partial class dbInitial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -237,7 +237,7 @@ namespace ClothesStoreMobileApplication.Migrations
                             Content = "Hello, I have a question about my order.",
                             RoomId = 1,
                             SenderId = 3,
-                            Timestamp = new DateTime(2024, 10, 17, 7, 56, 40, 545, DateTimeKind.Local).AddTicks(7406)
+                            Timestamp = new DateTime(2024, 10, 22, 10, 35, 34, 437, DateTimeKind.Local).AddTicks(2794)
                         },
                         new
                         {
@@ -245,7 +245,7 @@ namespace ClothesStoreMobileApplication.Migrations
                             Content = "Sure, how can I assist you?",
                             RoomId = 1,
                             SenderId = 2,
-                            Timestamp = new DateTime(2024, 10, 17, 7, 56, 40, 545, DateTimeKind.Local).AddTicks(7409)
+                            Timestamp = new DateTime(2024, 10, 22, 10, 35, 34, 437, DateTimeKind.Local).AddTicks(2795)
                         },
                         new
                         {
@@ -253,7 +253,7 @@ namespace ClothesStoreMobileApplication.Migrations
                             Content = "Is there anything specific you need help with?",
                             RoomId = 1,
                             SenderId = 2,
-                            Timestamp = new DateTime(2024, 10, 17, 7, 56, 40, 545, DateTimeKind.Local).AddTicks(7411)
+                            Timestamp = new DateTime(2024, 10, 22, 10, 35, 34, 437, DateTimeKind.Local).AddTicks(2797)
                         });
                 });
 
@@ -884,7 +884,7 @@ namespace ClothesStoreMobileApplication.Migrations
                             OrderId = 1,
                             CustomerId = 1,
                             DiscountCode = "SUMMER20",
-                            OrderDate = new DateTime(2024, 10, 17, 7, 56, 40, 545, DateTimeKind.Local).AddTicks(7199),
+                            OrderDate = new DateTime(2024, 10, 22, 10, 35, 34, 437, DateTimeKind.Local).AddTicks(2649),
                             PaymentMethod = "credit_card",
                             ShipAddress = "123 Main St, Cityville",
                             ShipFee = 5,
@@ -898,7 +898,7 @@ namespace ClothesStoreMobileApplication.Migrations
                         {
                             OrderId = 2,
                             CustomerId = 1,
-                            OrderDate = new DateTime(2024, 10, 17, 7, 56, 40, 545, DateTimeKind.Local).AddTicks(7205),
+                            OrderDate = new DateTime(2024, 10, 22, 10, 35, 34, 437, DateTimeKind.Local).AddTicks(2652),
                             PaymentMethod = "paypal",
                             ShipAddress = "456 Elm St, Townsville",
                             ShipFee = 0,
@@ -1586,7 +1586,7 @@ namespace ClothesStoreMobileApplication.Migrations
                         {
                             ReplyId = 1,
                             Content = "Thank you for your feedback!",
-                            ReplyDate = new DateTime(2024, 10, 17, 7, 56, 40, 545, DateTimeKind.Local).AddTicks(7328),
+                            ReplyDate = new DateTime(2024, 10, 22, 10, 35, 34, 437, DateTimeKind.Local).AddTicks(2740),
                             ReviewId = 1,
                             UserId = 1
                         },
@@ -1594,7 +1594,7 @@ namespace ClothesStoreMobileApplication.Migrations
                         {
                             ReplyId = 2,
                             Content = "We appreciate your input!",
-                            ReplyDate = new DateTime(2024, 10, 17, 7, 56, 40, 545, DateTimeKind.Local).AddTicks(7331),
+                            ReplyDate = new DateTime(2024, 10, 22, 10, 35, 34, 437, DateTimeKind.Local).AddTicks(2742),
                             ReviewId = 2,
                             UserId = 2
                         });
@@ -1680,6 +1680,12 @@ namespace ClothesStoreMobileApplication.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("float");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
@@ -1693,21 +1699,25 @@ namespace ClothesStoreMobileApplication.Migrations
                         new
                         {
                             SellerId = 1,
-                            Address = "123 Fashion Street, City X",
+                            Address = "368 Nguyễn Thái Học, Ngô Mây, Thành phố, Bình Định, Vietnam",
                             Avt = "https://i.imgur.com/thZDKR1.png",
-                            CompanyName = "Fashion World",
+                            CompanyName = "Tây Fashion Shop 1",
                             Cover = "https://i.imgur.com/nIBeNMD.jpeg",
-                            Description = "A well-known fashion retailer offering high-quality garments.",
+                            Description = "Man Fashion \nA well-known fashion retailer offering high-quality garments.",
+                            Latitude = 13.765308955609873,
+                            Longitude = 109.21480116679632,
                             UserId = 2
                         },
                         new
                         {
                             SellerId = 2,
-                            Address = "456 Shoe Street, City Y",
+                            Address = "185-12 Phạm Ngũ Lão, Phường Phạm Ngũ Lão, Quận 1, Hồ Chí Minh 700000, Vietnam",
                             Avt = "https://i.imgur.com/7ZIv1jz.png",
-                            CompanyName = "Shoe Haven",
+                            CompanyName = "Saigon Jane T-shirt Shop",
                             Cover = "https://i.imgur.com/7ZIv1jz.png",
                             Description = "A leading shoe retailer offering a wide range of footwear.",
+                            Latitude = 10.771346809594261,
+                            Longitude = 106.6925437473553,
                             UserId = 4
                         });
                 });
@@ -1761,7 +1771,7 @@ namespace ClothesStoreMobileApplication.Migrations
                             UserId = 2,
                             Email = "seller1@example.com",
                             Password = "seller1password",
-                            Phone = "0987654321",
+                            Phone = "0981961993",
                             Status = true,
                             UserType = 1,
                             Username = "seller1"
@@ -1781,7 +1791,7 @@ namespace ClothesStoreMobileApplication.Migrations
                             UserId = 4,
                             Email = "seller2@example.com",
                             Password = "seller2password",
-                            Phone = "0987123456",
+                            Phone = "0931335263",
                             Status = true,
                             UserType = 1,
                             Username = "seller2"

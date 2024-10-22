@@ -158,6 +158,8 @@ namespace ClothesStoreMobileApplication.Migrations
                     CompanyName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Address = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    Latitude = table.Column<double>(type: "float", nullable: true),
+                    Longitude = table.Column<double>(type: "float", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -453,8 +455,24 @@ namespace ClothesStoreMobileApplication.Migrations
                 {
                     { 1, "Size", "Small" },
                     { 2, "Size", "Medium" },
-                    { 3, "Color", "Blue" },
-                    { 4, "Color", "Red" }
+                    { 3, "Size", "Large" },
+                    { 4, "Color", "Blue" },
+                    { 5, "Color", "Red" },
+                    { 6, "Color", "Green" },
+                    { 7, "Material", "Cotton" },
+                    { 8, "Material", "Polyester" },
+                    { 9, "Material", "Wool" },
+                    { 10, "Style", "Casual" },
+                    { 11, "Style", "Formal" },
+                    { 12, "Length", "Short" },
+                    { 13, "Length", "Long" },
+                    { 14, "Fit", "Regular" },
+                    { 15, "Fit", "Slim" },
+                    { 16, "Season", "Summer" },
+                    { 17, "Season", "Winter" },
+                    { 18, "Gender", "Men" },
+                    { 19, "Gender", "Women" },
+                    { 20, "Origin", "Imported" }
                 });
 
             migrationBuilder.InsertData(
@@ -463,9 +481,9 @@ namespace ClothesStoreMobileApplication.Migrations
                 values: new object[,]
                 {
                     { 1, "admin@example.com", "adminpassword", "0123456789", true, 0, "admin" },
-                    { 2, "seller1@example.com", "seller1password", "0987654321", true, 1, "seller1" },
+                    { 2, "seller1@example.com", "seller1password", "0981961993", true, 1, "seller1" },
                     { 3, "customer1@example.com", "customer1password", "0123987654", true, 2, "customer1" },
-                    { 4, "seller2@example.com", "seller2password", "0987123456", true, 1, "seller2" }
+                    { 4, "seller2@example.com", "seller2password", "0931335263", true, 1, "seller2" }
                 });
 
             migrationBuilder.InsertData(
@@ -485,11 +503,11 @@ namespace ClothesStoreMobileApplication.Migrations
 
             migrationBuilder.InsertData(
                 table: "Sellers",
-                columns: new[] { "SellerId", "Address", "Avt", "CompanyName", "Cover", "Description", "UserId" },
+                columns: new[] { "SellerId", "Address", "Avt", "CompanyName", "Cover", "Description", "Latitude", "Longitude", "UserId" },
                 values: new object[,]
                 {
-                    { 1, "123 Fashion Street, City X", "https://i.imgur.com/thZDKR1.png", "Fashion World", "https://i.imgur.com/nIBeNMD.jpeg", "A well-known fashion retailer offering high-quality garments.", 2 },
-                    { 2, "456 Shoe Street, City Y", "https://i.imgur.com/7ZIv1jz.png", "Shoe Haven", "https://i.imgur.com/7ZIv1jz.png", "A leading shoe retailer offering a wide range of footwear.", 4 }
+                    { 1, "368 Nguyễn Thái Học, Ngô Mây, Thành phố, Bình Định, Vietnam", "https://i.imgur.com/thZDKR1.png", "Tây Fashion Shop 1", "https://i.imgur.com/nIBeNMD.jpeg", "Man Fashion \nA well-known fashion retailer offering high-quality garments.", 13.765308955609873, 109.21480116679632, 2 },
+                    { 2, "185-12 Phạm Ngũ Lão, Phường Phạm Ngũ Lão, Quận 1, Hồ Chí Minh 700000, Vietnam", "https://i.imgur.com/7ZIv1jz.png", "Saigon Jane T-shirt Shop", "https://i.imgur.com/7ZIv1jz.png", "A leading shoe retailer offering a wide range of footwear.", 10.771346809594261, 106.6925437473553, 4 }
                 });
 
             migrationBuilder.InsertData(
@@ -502,9 +520,9 @@ namespace ClothesStoreMobileApplication.Migrations
                 columns: new[] { "MessageId", "Content", "Icon", "Media", "RoomId", "SenderId", "Timestamp" },
                 values: new object[,]
                 {
-                    { 1, "Hello, I have a question about my order.", null, null, 1, 3, new DateTime(2024, 10, 6, 13, 17, 7, 347, DateTimeKind.Local).AddTicks(4985) },
-                    { 2, "Sure, how can I assist you?", null, null, 1, 2, new DateTime(2024, 10, 6, 13, 17, 7, 347, DateTimeKind.Local).AddTicks(4987) },
-                    { 3, "Is there anything specific you need help with?", null, null, 1, 2, new DateTime(2024, 10, 6, 13, 17, 7, 347, DateTimeKind.Local).AddTicks(4989) }
+                    { 1, "Hello, I have a question about my order.", null, null, 1, 3, new DateTime(2024, 10, 22, 10, 35, 34, 437, DateTimeKind.Local).AddTicks(2794) },
+                    { 2, "Sure, how can I assist you?", null, null, 1, 2, new DateTime(2024, 10, 22, 10, 35, 34, 437, DateTimeKind.Local).AddTicks(2795) },
+                    { 3, "Is there anything specific you need help with?", null, null, 1, 2, new DateTime(2024, 10, 22, 10, 35, 34, 437, DateTimeKind.Local).AddTicks(2797) }
                 });
 
             migrationBuilder.InsertData(
@@ -512,8 +530,8 @@ namespace ClothesStoreMobileApplication.Migrations
                 columns: new[] { "OrderId", "CustomerId", "DiscountCode", "OrderDate", "PaymentMethod", "ShipAddress", "ShipFee", "ShipMail", "ShipName", "ShipPhone", "Status", "TotalAmount" },
                 values: new object[,]
                 {
-                    { 1, 1, "SUMMER20", new DateTime(2024, 10, 6, 13, 17, 7, 347, DateTimeKind.Local).AddTicks(4804), "credit_card", "123 Main St, Cityville", 5, "john@example.com", "John Doe", "123-456-7890", "pending", 100.0 },
-                    { 2, 1, null, new DateTime(2024, 10, 6, 13, 17, 7, 347, DateTimeKind.Local).AddTicks(4808), "paypal", "456 Elm St, Townsville", 0, "jane@example.com", "Jane Smith", "098-765-4321", "completed", 150.0 }
+                    { 1, 1, "SUMMER20", new DateTime(2024, 10, 22, 10, 35, 34, 437, DateTimeKind.Local).AddTicks(2649), "credit_card", "123 Main St, Cityville", 5, "john@example.com", "John Doe", "123-456-7890", "pending", 100.0 },
+                    { 2, 1, null, new DateTime(2024, 10, 22, 10, 35, 34, 437, DateTimeKind.Local).AddTicks(2652), "paypal", "456 Elm St, Townsville", 0, "jane@example.com", "Jane Smith", "098-765-4321", "completed", 150.0 }
                 });
 
             migrationBuilder.InsertData(
@@ -563,10 +581,69 @@ namespace ClothesStoreMobileApplication.Migrations
                 columns: new[] { "OptionId", "OptionGroupId", "Price", "ProductId" },
                 values: new object[,]
                 {
-                    { 1, 1, 0m, 1 },
-                    { 2, 2, 0m, 2 },
-                    { 3, 3, 0m, 3 },
-                    { 4, 4, 0m, 4 }
+                    { 1, 1, 1.0m, 1 },
+                    { 2, 2, 1.5m, 1 },
+                    { 3, 3, 2.0m, 1 },
+                    { 4, 4, 2.5m, 1 },
+                    { 5, 1, 1.0m, 2 },
+                    { 6, 2, 1.8m, 2 },
+                    { 7, 3, 2.2m, 2 },
+                    { 8, 5, 2.7m, 2 },
+                    { 9, 1, 1.3m, 3 },
+                    { 10, 4, 3.0m, 3 },
+                    { 11, 6, 3.5m, 3 },
+                    { 12, 7, 4.0m, 3 },
+                    { 13, 8, 4.5m, 4 },
+                    { 14, 9, 5.0m, 4 },
+                    { 15, 10, 5.5m, 4 },
+                    { 16, 2, 1.5m, 5 },
+                    { 17, 3, 2.0m, 5 },
+                    { 18, 5, 2.5m, 5 },
+                    { 19, 6, 3.0m, 6 },
+                    { 20, 7, 3.5m, 6 },
+                    { 21, 1, 1.0m, 7 },
+                    { 22, 8, 4.0m, 7 },
+                    { 23, 9, 4.5m, 7 },
+                    { 24, 2, 1.5m, 8 },
+                    { 25, 10, 5.5m, 8 },
+                    { 26, 3, 2.0m, 8 },
+                    { 27, 1, 1.0m, 9 },
+                    { 28, 6, 3.5m, 9 },
+                    { 29, 7, 4.0m, 9 },
+                    { 30, 5, 2.5m, 10 },
+                    { 31, 8, 4.5m, 10 },
+                    { 32, 9, 5.0m, 10 },
+                    { 33, 10, 5.5m, 11 },
+                    { 34, 2, 1.7m, 11 },
+                    { 35, 3, 2.3m, 11 },
+                    { 36, 4, 2.9m, 12 },
+                    { 37, 5, 3.4m, 12 },
+                    { 38, 7, 4.4m, 13 },
+                    { 39, 8, 4.9m, 13 },
+                    { 40, 9, 5.4m, 14 },
+                    { 41, 10, 5.9m, 14 },
+                    { 42, 6, 3.8m, 15 },
+                    { 43, 2, 1.9m, 15 },
+                    { 44, 4, 2.6m, 16 },
+                    { 45, 8, 4.7m, 16 },
+                    { 46, 1, 1.2m, 17 },
+                    { 47, 3, 2.5m, 17 },
+                    { 48, 5, 3.1m, 18 },
+                    { 49, 6, 3.7m, 18 },
+                    { 50, 7, 4.2m, 19 },
+                    { 51, 8, 4.8m, 19 },
+                    { 52, 9, 5.3m, 20 },
+                    { 53, 10, 5.7m, 20 },
+                    { 54, 1, 1.1m, 21 },
+                    { 55, 2, 1.5m, 21 },
+                    { 56, 3, 2.0m, 22 },
+                    { 57, 4, 2.5m, 22 },
+                    { 58, 5, 3.0m, 23 },
+                    { 59, 6, 3.5m, 23 },
+                    { 60, 7, 4.0m, 24 },
+                    { 61, 8, 4.5m, 24 },
+                    { 62, 9, 5.0m, 25 },
+                    { 63, 10, 5.5m, 25 }
                 });
 
             migrationBuilder.InsertData(
@@ -593,8 +670,8 @@ namespace ClothesStoreMobileApplication.Migrations
                 columns: new[] { "ReplyId", "Content", "ReplyDate", "ReviewId", "UserId" },
                 values: new object[,]
                 {
-                    { 1, "Thank you for your feedback!", new DateTime(2024, 10, 6, 13, 17, 7, 347, DateTimeKind.Local).AddTicks(4917), 1, 1 },
-                    { 2, "We appreciate your input!", new DateTime(2024, 10, 6, 13, 17, 7, 347, DateTimeKind.Local).AddTicks(4919), 2, 2 }
+                    { 1, "Thank you for your feedback!", new DateTime(2024, 10, 22, 10, 35, 34, 437, DateTimeKind.Local).AddTicks(2740), 1, 1 },
+                    { 2, "We appreciate your input!", new DateTime(2024, 10, 22, 10, 35, 34, 437, DateTimeKind.Local).AddTicks(2742), 2, 2 }
                 });
 
             migrationBuilder.CreateIndex(

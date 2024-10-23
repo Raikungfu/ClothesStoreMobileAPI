@@ -217,7 +217,7 @@ namespace ClothesStoreMobileApplication.Controllers
 //     }
 // }
 
-        [HttpPost]
+          [HttpPost]
         public IActionResult Post([FromBody] OrderCreateViewModel OrderVM)
         {
             try
@@ -243,7 +243,7 @@ namespace ClothesStoreMobileApplication.Controllers
                 //Nếu không thì trả về BadRequest
                 //Nếu có thì mới tiến hành tạo Order
 
-                var cart = _unitOfWork.Cart.GetFirstOrDefault(u => u.CustomerId == OrderVM.CustomerId);
+                var cart = _unitOfWork.Cart.GetFirstOrDefault(u => u.CustomerId == customer.CustomerId);
                 if (cart == null)
                 {
                     return BadRequest("Cart của Customer không tồn tại");
@@ -252,7 +252,6 @@ namespace ClothesStoreMobileApplication.Controllers
                 {
                     //Tạo mới Order
                     Order order = _mapper.Map<Order>(OrderVM);
-                     customer = _unitOfWork.Customer.GetFirstOrDefault(u => u.CustomerId == OrderVM.CustomerId);    
                     if (string.IsNullOrEmpty(OrderVM.ShipName))
                     {
                         if(customer.Name != null)
@@ -283,6 +282,7 @@ namespace ClothesStoreMobileApplication.Controllers
                     {
                         order.ShipMail = _unitOfWork.Customer.GetFirstOrDefault(u => u.CustomerId == OrderVM.CustomerId, includeProperties: "User").User.Email;
                     }
+                    order.OrderDate = DateTime.Now;
                     _unitOfWork.Order.Add(order);
                     _unitOfWork.Save();
 

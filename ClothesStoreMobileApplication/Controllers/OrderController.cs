@@ -253,6 +253,7 @@ namespace ClothesStoreMobileApplication.Controllers
                 {
                     //Tạo mới Order
                     Order order = _mapper.Map<Order>(OrderVM);
+                    order.CustomerId = customer.CustomerId;
                     if (string.IsNullOrEmpty(OrderVM.ShipName))
                     {
                         if(customer.Name != null)

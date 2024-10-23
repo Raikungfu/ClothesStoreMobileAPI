@@ -217,7 +217,8 @@ namespace ClothesStoreMobileApplication.Controllers
 //     }
 // }
 
-          [HttpPost]
+  
+        [HttpPost]
         public IActionResult Post([FromBody] OrderCreateViewModel OrderVM)
         {
             try
@@ -276,13 +277,16 @@ namespace ClothesStoreMobileApplication.Controllers
                     }
                     if (string.IsNullOrEmpty(OrderVM.ShipPhone))
                     {
-                        order.ShipPhone = _unitOfWork.Customer.GetFirstOrDefault(u => u.CustomerId == OrderVM.CustomerId, includeProperties: "User").User.Phone;
+                        order.ShipPhone = customer.User?.Phone;
                     }
+
                     if (string.IsNullOrEmpty(OrderVM.ShipMail))
                     {
-                        order.ShipMail = _unitOfWork.Customer.GetFirstOrDefault(u => u.CustomerId == OrderVM.CustomerId, includeProperties: "User").User.Email;
+                        order.ShipMail = customer.User?.Email; 
                     }
+
                     order.OrderDate = DateTime.Now;
+                    order.PaymentMethod = OrderVM.PaymentMethod;
                     _unitOfWork.Order.Add(order);
                     _unitOfWork.Save();
 

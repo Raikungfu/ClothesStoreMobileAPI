@@ -43,6 +43,19 @@ namespace ClothesStoreMobileApplication.Controllers
             return Ok(obj);
         }
 
+        [HttpDelete("{id:int}")]
+        public IActionResult Delete(int id)
+        {
+            var objFromDb = _unitOfWork.Cart.GetFirstOrDefault(u => u.CartId == id);
+            if (objFromDb == null)
+            {
+                return NotFound();
+            }
+            _unitOfWork.Cart.Remove(objFromDb);
+            _unitOfWork.Save();
+            return NoContent();
+        }
+
         [HttpPost]
         public IActionResult Post(int customerId)
         {
@@ -51,6 +64,11 @@ namespace ClothesStoreMobileApplication.Controllers
                 if (!ModelState.IsValid)
                 {
                     return BadRequest(ModelState);
+                }
+                var isHasCart = _unitOfWork.Cart.GetFirstOrDefault(u => u.CustomerId == customerId);
+                if (isHasCart != null)
+                {
+                    return BadRequest("Cart is already exist");
                 }
                 var objToCreate = new Cart
                 {

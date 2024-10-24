@@ -234,6 +234,8 @@ namespace ClothesStoreMobileApplication.Controllers
                 }
 
                 var customer = _unitOfWork.Customer.GetFirstOrDefault(c => c.UserId == userId);
+                var userFollowCustomerId = _unitOfWork.User.GetFirstOrDefault(u => u.UserId == userId);
+
                 if (customer == null)
                 {
                     return NotFound("Customer not found.");
@@ -250,8 +252,8 @@ namespace ClothesStoreMobileApplication.Controllers
                     CustomerId = customer.CustomerId,
                     ShipName = customer.Name,
                     ShipAddress = customer.Address,
-                    ShipPhone = customer.User?.Phone,
-                    ShipMail = customer.User?.Email,
+                    ShipPhone = userFollowCustomerId.Phone,
+                    ShipMail = userFollowCustomerId.Email,
                     OrderDate = DateTime.Now,
                     PaymentMethod = OrderVM.PaymentMethod
                 };
@@ -282,10 +284,6 @@ namespace ClothesStoreMobileApplication.Controllers
                     item.Product.QuantitySold += (uint)item.Quantity;
                     _unitOfWork.Product.Update(item.Product);
                     _unitOfWork.Save();
-
-                    // Xóa CartItem
-                    _unitOfWork.CartItem.Remove(item);
-                    _unitOfWork.Save();
                 }
 
                 // Tính tổng tiền
@@ -315,9 +313,14 @@ namespace ClothesStoreMobileApplication.Controllers
                 _unitOfWork.Order.Update(order);
                 _unitOfWork.Save();
 
-                // Xóa giỏ hàng
-                _unitOfWork.Cart.Remove(cart);
-                _unitOfWork.Save();
+
+                // Xóa CartItem
+                cartItems = _unitOfWork.CartItem.GetAll(u => u.CartId == cart.CartId);  
+                foreach (var item in cartItems)
+                {
+                    _unitOfWork.CartItem.Remove(item);
+                    _unitOfWork.Save();
+                }
 
                 return Ok(order);
             }

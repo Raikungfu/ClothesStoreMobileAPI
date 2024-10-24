@@ -16,5 +16,7 @@ namespace ClothesStoreMobileApplication.Models
         public Customer Customer { get; set; }
         [JsonIgnore]
         public ICollection<Product> Products { get; set; }
+
+        public ICollection<CartItem> CartItems { get; set; }
     }
 }

@@ -54,6 +54,11 @@ namespace ClothesStoreMobileApplication.Models
                 .HasForeignKey(cm => cm.RoomId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<CartItem>().HasOne(ci => ci.Cart)
+                .WithMany(c => c.CartItems)
+                .HasForeignKey(ci => ci.CartId)
+                .OnDelete(DeleteBehavior.Cascade);
+
 
             // Seed data for User
             modelBuilder.Entity<User>().HasData(

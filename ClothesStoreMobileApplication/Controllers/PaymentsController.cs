@@ -1,5 +1,7 @@
 ﻿using Braintree;
+using ClothesStoreMobileApplication.Library;
 using ClothesStoreMobileApplication.Service;
+using ClothesStoreMobileApplication.ViewModels.Payment;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
@@ -21,27 +23,6 @@ namespace ClothesStoreMobileApplication.Controllers
             _httpClientFactory = httpClientFactory;
             _configuration = configuration;
         }
-        /*
-        [HttpPost("checkout")]
-        public async Task<IActionResult> Checkout(decimal amount, string paymentNonce)
-        {
-            var result = await _braintreeService.ProcessPayment(amount, paymentNonce);
-            if (result.IsSuccess())
-            {
-                return Ok(result.Target);
-            }
-
-            return BadRequest(result.Message);
-        }
-
-        [HttpGet("client-token")]
-        public async Task<IActionResult> GetClientToken()
-        {
-            var clientToken = await _braintreeService.GetClientToken();
-            return Ok(new { ClientToken = clientToken });
-        }
-
-        */
 
         [HttpPost("get-access-token")]
         public async Task<IActionResult> GetAccessToken()
@@ -66,6 +47,44 @@ namespace ClothesStoreMobileApplication.Controllers
 
             return BadRequest("Unable to fetch access token");
         }
+
+        [HttpPost("create-vnpay-payment-link")]
+        public async Task<IActionResult> CreatePaymentUrl(VnPaymentRequestModel model)
+        {
+            string vnp_ReturnUrl = _configuration["VnPay:PaymentBackReturnUrl"];
+            string vnp_Url = _configuration["VnPay:BaseURL"];
+            string vnp_TmnCode = _configuration["VnPay:TmnCode"];
+            string vnp_HashSecret = _configuration["VnPay:HashSecret"];
+
+            VnPayLibrary vnpay = new VnPayLibrary();
+
+            vnpay.AddRequestData("vnp_Version", "2.1.0");
+            vnpay.AddRequestData("vnp_Command", "pay");
+            vnpay.AddRequestData("vnp_TmnCode", vnp_TmnCode);
+            vnpay.AddRequestData("vnp_Amount", (model.TotalPrice * 100).ToString());
+
+            if (model.VnPayMethod == VnPayMethod.ATM)
+            {
+                vnpay.AddRequestData("vnp_BankCode", "VNBANK");
+            }
+            else if (model.VnPayMethod == VnPayMethod.CreditCard)
+            {
+                vnpay.AddRequestData("vnp_BankCode", "INTCARD");
+            }
+
+            vnpay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
+            vnpay.AddRequestData("vnp_CurrCode", "VND");
+            vnpay.AddRequestData("vnp_IpAddr", Utils.GetIpAddress(HttpContext));
+            vnpay.AddRequestData("vnp_Locale", "vn");
+            vnpay.AddRequestData("vnp_OrderInfo", "Thanh toan don hang:" + model.BookingId);
+            vnpay.AddRequestData("vnp_OrderType", "other");
+            vnpay.AddRequestData("vnp_ReturnUrl", vnp_ReturnUrl);
+            vnpay.AddRequestData("vnp_TxnRef", model.BookingId.ToString());
+
+            string paymentUrl = vnpay.CreateRequestUrl(vnp_Url, vnp_HashSecret);
+            return Ok(new { paymentUrl = paymentUrl });
+        }
+
 
         [HttpPost("create-order")]
         public async Task<IActionResult> CreateOrder([FromBody] OrderRequest orderRequest)

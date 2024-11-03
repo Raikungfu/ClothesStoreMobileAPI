@@ -217,6 +217,23 @@ namespace ClothesStoreMobileApplication.Controllers
 //     }
 // }
 
+
+        [HttpPut("update-status/{id:int}")]
+        public IActionResult UpdateOrderStatus(int id, [FromBody] string newStatus)
+        {
+            var order = _unitOfWork.Order.GetFirstOrDefault(u => u.OrderId == id);
+            if (order == null)
+            {
+                return NotFound("Order not found.");
+            }
+
+            order.Status = newStatus;
+            _unitOfWork.Order.Update(order);
+            _unitOfWork.Save();
+
+            return Ok(order);
+        }
+
           [HttpPost]
         public IActionResult Post([FromBody] OrderCreateViewModel OrderVM)
         {

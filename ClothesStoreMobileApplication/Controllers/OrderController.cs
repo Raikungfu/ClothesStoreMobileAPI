@@ -234,6 +234,28 @@ namespace ClothesStoreMobileApplication.Controllers
             return Ok(order);
         }
 
+
+        [HttpDelete("{id:int}")]
+        public IActionResult DeleteOrder(int id)
+        {    var order = _unitOfWork.Order.GetFirstOrDefault(u => u.OrderId == id);
+             if (order == null)
+             {
+                 return NotFound("Order not found.");
+             }
+
+             var orderItems = _unitOfWork.OrderItem.GetAll(u => u.OrderId == id);
+             foreach (var item in orderItems)
+             {
+                 _unitOfWork.OrderItem.Remove(item);
+             }
+             _unitOfWork.Save();
+
+             _unitOfWork.Order.Remove(order);
+             _unitOfWork.Save();
+
+              return Ok("Order deleted successfully.");
+        }
+
           [HttpPost]
         public IActionResult Post([FromBody] OrderCreateViewModel OrderVM)
         {

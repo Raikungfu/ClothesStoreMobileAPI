@@ -63,28 +63,71 @@ namespace ClothesStoreMobileApplication.Controllers
 
 
         [HttpPost("verify-otp")]
-        [Authorize]
         public IActionResult VerifyOtp([FromBody] OtpModel otpModel)
         {
-            var emailClaim = User.FindFirst("Email")?.Value;
-            var otpClaim = User.FindFirst("OTP")?.Value;
+            var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var claimsPrincipal = ValidateJwtToken(token);
 
+            if (claimsPrincipal == null)
+            {
+                return Unauthorized(new { Message = "Invalid or expired token." });
+            }
+
+            var emailClaim = claimsPrincipal.FindFirst("Email")?.Value;
+            var otpClaim = claimsPrincipal.FindFirst("OTP")?.Value;
 
             if (otpClaim == null || otpModel.Otp.ToString() != otpClaim)
             {
                 return BadRequest(new { Message = "OTP does not match." });
             }
 
-            string token = KeyHelper.GenerateJwtToken(emailClaim, 8020);
+            string newToken = KeyHelper.GenerateJwtToken(emailClaim, 8020);
 
-            return Ok(new { Token = token, Message = "OTP verified." });
+            return Ok(new { Token = newToken, Message = "OTP verified." });
         }
+
+        public static ClaimsPrincipal ValidateJwtToken(string token)
+        {
+            var rsa = KeyHelper.GetPublicKey();
+            var key = new RsaSecurityKey(rsa);
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            try
+            {
+                var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = "RaiYugi",
+                    ValidAudience = "Saint",
+                    IssuerSigningKey = key,
+                    ClockSkew = TimeSpan.Zero
+                }, out SecurityToken validatedToken);
+
+                return principal;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
 
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordModel model)
         {
-            var emailClaim = User.FindFirst("Email")?.Value;
-            var otpClaim = User.FindFirst("OTP")?.Value;
+            var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var claimsPrincipal = ValidateJwtToken(token);
+
+            if (claimsPrincipal == null)
+            {
+                return Unauthorized(new { Message = "Invalid or expired token." });
+            }
+
+            var emailClaim = claimsPrincipal.FindFirst("Email")?.Value;
+            var otpClaim = claimsPrincipal.FindFirst("OTP")?.Value;
 
             if (otpClaim != "8020")
             {

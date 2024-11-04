@@ -48,7 +48,7 @@ namespace ClothesStoreMobileApplication.Service
                 issuer: "RaiYugi",
                 audience: "Saint",
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(1),
+                expires: DateTime.Now.AddMinutes(5),
                 signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);

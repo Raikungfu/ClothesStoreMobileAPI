@@ -8,6 +8,8 @@ using Microsoft.IdentityModel.Tokens;
 using ClothesStoreMobileApplication.ViewModels.User;
 using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
+using System.Net.Mail;
+using System.Net;
 
 namespace ClothesStoreMobileApplication.Controllers
 {
@@ -79,6 +81,7 @@ namespace ClothesStoreMobileApplication.Controllers
                     return BadRequest(new { Message = "Role of user not correct!" });
             }
 
+            SendRegisterSuccessEmail(model.Email, model.Username, model.Password);
 
             return Ok(new { Message = "Registration successful." });
         }
@@ -250,5 +253,56 @@ namespace ClothesStoreMobileApplication.Controllers
 
             return Ok(new { Message = "Update successful!" });
         }
+
+        private void SendRegisterSuccessEmail(string email, string username, string password)
+        {
+            var fromEmail = new MailAddress(_configuration["EmailSettings:Username"], _configuration["EmailSettings:FromName"]);
+            var toEmail = new MailAddress(email);
+            string subject = "Registration Successful - Clothes Store";
+            string body = string.Format(
+                @"<!DOCTYPE html>
+        <html lang='en'>
+        <head>
+            <meta charset='UTF-8'>
+            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+            <title>Registration Successful - Clothes Store</title>
+        </head>
+        <body>
+            <h2>Registration Successful!</h2>
+            <p>Hello <strong>{0},</strong></p>
+            <p>Congratulations on successfully registering on Clothes Store!</p>
+            <p>Your username: <strong>{0}</strong></p>
+            <p>Your password: <strong>{1}</strong></p>
+            <p>Thank you for choosing our service!</p>
+            <p>Best regards,</p>
+            <p style='font-style: italic; font-weight: bold;'>The Clothes Store Team</p>
+        </body>
+        </html>
+        <h3 style='color:red;'>Clothes Store - Fashion at its Best</h3>
+        <p style='font-style: italic;'>Quality - Style - Speed - Convenience</p>
+        </body>
+        </html>", username, password);
+
+            var smtp = new SmtpClient
+            {
+                Host = _configuration["EmailSettings:Host"],
+                Port = int.Parse(_configuration["EmailSettings:Port"]),
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(fromEmail.Address, _configuration["EmailSettings:Password"])
+            };
+
+            using (var message = new MailMessage(fromEmail, toEmail)
+            {
+                Subject = subject,
+                Body = body,
+                IsBodyHtml = true
+            })
+            {
+                smtp.Send(message);
+            }
+        }
+
     }
 }
